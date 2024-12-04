@@ -128,6 +128,17 @@ void ElaText::setTextStyle(ElaTextType::TextStyle textStyle)
         textFont.setWeight(QFont::DemiBold);
         break;
     }
+    case ElaTextType::CardTitle:
+    {
+        textFont.setPixelSize(15);
+        break;
+    }
+    case ElaTextType::CardsubTitle:
+    {
+        textFont.setPixelSize(12);
+        textFont.setWeight(QFont::Normal);
+        break;
+    }
     }
     setFont(textFont);
 }
