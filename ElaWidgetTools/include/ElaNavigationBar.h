@@ -20,6 +20,7 @@ public:
     void setUserInfoCardPixmap(QPixmap pix);
     void setUserInfoCardTitle(QString title);
     void setUserInfoCardSubTitle(QString subTitle);
+    void setExpandWidth(int width);
 
     ElaNavigationType::NodeOperateReturnType addExpanderNode(QString expanderTitle, QString& expanderKey, ElaIconType::IconName awesome = ElaIconType::None);
     ElaNavigationType::NodeOperateReturnType addExpanderNode(QString expanderTitle, QString& expanderKey, QString targetExpanderKey, ElaIconType::IconName awesome = ElaIconType::None);

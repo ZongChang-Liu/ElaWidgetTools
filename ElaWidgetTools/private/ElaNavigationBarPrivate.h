@@ -31,6 +31,7 @@ class ElaNavigationBarPrivate : public QObject
     Q_D_CREATE(ElaNavigationBar)
     Q_PROPERTY_CREATE_D(bool, IsTransparent)
     Q_PROPERTY_CREATE_D(bool, IsAllowPageOpenInNewWindow)
+    Q_PROPERTY_CREATE_D(int, ExpandWidth)
     Q_PROPERTY_CREATE(int, NavigationViewWidth);
 
 public:

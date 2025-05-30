@@ -30,7 +30,8 @@ ElaNavigationBar::ElaNavigationBar(QWidget* parent)
     Q_D(ElaNavigationBar);
     d->q_ptr = this;
     d->_pIsAllowPageOpenInNewWindow = true;
-    setFixedWidth(300);
+    d->_pExpandWidth = 200;
+    setFixedWidth(d->_pExpandWidth);
     d->_pIsTransparent = true;
 
     //用户卡片
@@ -189,6 +190,13 @@ void ElaNavigationBar::setUserInfoCardSubTitle(QString subTitle)
 {
     Q_D(ElaNavigationBar);
     d->_userCard->setSubTitle(subTitle);
+}
+
+void ElaNavigationBar::setExpandWidth(const int width)
+{
+    Q_D(ElaNavigationBar);
+    d->_pExpandWidth = width;
+    setFixedWidth(d->_pExpandWidth);
 }
 
 ElaNavigationType::NodeOperateReturnType ElaNavigationBar::addExpanderNode(QString expanderTitle, QString& expanderKey, ElaIconType::IconName awesome)
