@@ -14,7 +14,6 @@ ElaSpinBox::ElaSpinBox(QWidget* parent)
 {
     Q_D(ElaSpinBox);
     d->q_ptr = this;
-    setFixedSize(120, 30);
     setStyle(new ElaSpinBoxStyle(style()));
     lineEdit()->setAlignment(Qt::AlignCenter);
     lineEdit()->setStyleSheet("background-color:transparent");

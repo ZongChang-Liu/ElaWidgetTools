@@ -72,6 +72,7 @@ ElaNavigationView::ElaNavigationView(QWidget* parent)
     connect(this, &ElaNavigationView::customContextMenuRequested, this, &ElaNavigationView::onCustomContextMenuRequested);
 
     _compactToolTip = new ElaToolTip(this);
+    _compactToolTip->setOffSetX(-105);
 }
 
 ElaNavigationView::~ElaNavigationView()
@@ -119,7 +120,7 @@ void ElaNavigationView::mouseMoveEvent(QMouseEvent* event)
         }
         ElaNavigationNode* posNode = static_cast<ElaNavigationNode*>(posIndex.internalPointer());
         _compactToolTip->setToolTip(posNode->getNodeTitle());
-        _compactToolTip->updatePos();
+        _compactToolTip->updatePos(QCursor::pos());
         _compactToolTip->show();
     }
     else
@@ -167,7 +168,7 @@ bool ElaNavigationView::eventFilter(QObject* watched, QEvent* event)
             }
             ElaNavigationNode* posNode = static_cast<ElaNavigationNode*>(posIndex.internalPointer());
             _compactToolTip->setToolTip(posNode->getNodeTitle());
-            _compactToolTip->updatePos();
+            _compactToolTip->updatePos(QCursor::pos());
             _compactToolTip->show();
         }
         else

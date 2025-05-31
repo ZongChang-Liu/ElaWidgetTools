@@ -112,6 +112,6 @@ int ElaDrawerContainer::_calculateContainertMinimumHeight() const
     {
         minimumHeight += widget->minimumHeight();
     }
-    minimumHeight = std::max(75, minimumHeight);
+    minimumHeight = std::max(50, minimumHeight);
     return minimumHeight;
 }

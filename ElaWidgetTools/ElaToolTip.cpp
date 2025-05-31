@@ -8,6 +8,8 @@
 #include "ElaToolTipPrivate.h"
 Q_PROPERTY_CREATE_Q_CPP(ElaToolTip, int, BorderRadius)
 Q_PROPERTY_CREATE_Q_CPP(ElaToolTip, int, DisplayMsec)
+Q_PROPERTY_CREATE_Q_CPP(ElaToolTip, int, OffSetX)
+Q_PROPERTY_CREATE_Q_CPP(ElaToolTip, int, OffSetY)
 Q_PROPERTY_CREATE_Q_CPP(ElaToolTip, int, ShowDelayMsec)
 Q_PROPERTY_CREATE_Q_CPP(ElaToolTip, int, HideDelayMsec)
 ElaToolTip::ElaToolTip(QWidget* parent)
@@ -84,10 +86,10 @@ QWidget* ElaToolTip::getCustomWidget() const
     return d->_pCustomWidget;
 }
 
-void ElaToolTip::updatePos()
+void ElaToolTip::updatePos(const QPoint& pos)
 {
     Q_D(ElaToolTip);
-    d->_updatePos();
+    d->_updatePos(pos);
 }
 
 void ElaToolTip::paintEvent(QPaintEvent* event)
