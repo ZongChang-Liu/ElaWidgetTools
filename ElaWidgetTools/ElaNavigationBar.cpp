@@ -143,9 +143,9 @@ ElaNavigationBar::ElaNavigationBar(QWidget* parent)
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignLeft);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 10, 5, 0);
+    mainLayout->setContentsMargins(0, 0, 5, 5);
     mainLayout->addLayout(userCardLayout);
-    mainLayout->addSpacing(4);
+    // mainLayout->addSpacing(4);
     mainLayout->addLayout(d->_navigationSuggestLayout);
     mainLayout->addSpacing(4);
     mainLayout->addWidget(d->_navigationView);

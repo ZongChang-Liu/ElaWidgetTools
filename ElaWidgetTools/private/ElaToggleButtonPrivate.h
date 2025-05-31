@@ -12,6 +12,8 @@ class ElaToggleButtonPrivate : public QObject
     Q_D_CREATE(ElaToggleButton)
     Q_PROPERTY_CREATE_D(int, BorderRadius)
     Q_PROPERTY_CREATE_D(QString, Text)
+    Q_PROPERTY_CREATE_D(bool, IconVisible)
+    Q_PROPERTY_CREATE_D(ElaIconType::IconName, Awesome)
     Q_PROPERTY_CREATE(int, ToggleAlpha)
 public:
     explicit ElaToggleButtonPrivate(QObject* parent = nullptr);

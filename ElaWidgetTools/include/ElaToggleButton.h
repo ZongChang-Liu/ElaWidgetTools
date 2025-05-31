@@ -3,6 +3,7 @@
 
 #include <QPushButton>
 
+#include "Def.h"
 #include "stdafx.h"
 class ElaToggleButtonPrivate;
 class ELA_EXPORT ElaToggleButton : public QWidget
@@ -11,10 +12,13 @@ class ELA_EXPORT ElaToggleButton : public QWidget
     Q_Q_CREATE(ElaToggleButton)
     Q_PROPERTY_CREATE_Q_H(int, BorderRadius)
     Q_PROPERTY_CREATE_Q_H(QString, Text)
+    Q_PROPERTY_CREATE_Q_H(bool, IconVisible)
 public:
     explicit ElaToggleButton(QWidget* parent = nullptr);
     explicit ElaToggleButton(QString text, QWidget* parent = nullptr);
     ~ElaToggleButton();
+
+    void setElaIcon(ElaIconType::IconName icon);
 
     void setIsToggled(bool isToggled);
     bool getIsToggled() const;

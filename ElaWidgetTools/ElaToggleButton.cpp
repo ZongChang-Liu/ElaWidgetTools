@@ -5,10 +5,12 @@
 #include <QPainterPath>
 #include <QPropertyAnimation>
 
+#include "ElaIcon.h"
 #include "ElaTheme.h"
 #include "private/ElaToggleButtonPrivate.h"
 Q_PROPERTY_CREATE_Q_CPP(ElaToggleButton, int, BorderRadius)
 Q_PROPERTY_CREATE_Q_CPP(ElaToggleButton, QString, Text)
+Q_PROPERTY_CREATE_Q_CPP(ElaToggleButton, bool, IconVisible)
 ElaToggleButton::ElaToggleButton(QWidget* parent)
     : QWidget(parent), d_ptr(new ElaToggleButtonPrivate())
 {
@@ -17,8 +19,8 @@ ElaToggleButton::ElaToggleButton(QWidget* parent)
     d->_pBorderRadius = 3;
     d->_themeMode = eTheme->getThemeMode();
     d->_pToggleAlpha = 0;
+    d->_pIconVisible = false;
     setMouseTracking(true);
-    setFixedSize(80, 32);
     QFont font = this->font();
     font.setPixelSize(15);
     setFont(font);
@@ -27,6 +29,7 @@ ElaToggleButton::ElaToggleButton(QWidget* parent)
     connect(eTheme, &ElaTheme::themeModeChanged, this, [=](ElaThemeType::ThemeMode themeMode) {
         d->_themeMode = themeMode;
     });
+    setProperty("ElaIconType", QChar((unsigned short)ElaIconType::AngleRight));
 }
 
 ElaToggleButton::ElaToggleButton(QString text, QWidget* parent)
@@ -38,6 +41,12 @@ ElaToggleButton::ElaToggleButton(QString text, QWidget* parent)
 
 ElaToggleButton::~ElaToggleButton()
 {
+}
+
+void ElaToggleButton::setElaIcon(ElaIconType::IconName icon)
+{
+    Q_D(ElaToggleButton);
+    d->_pAwesome = icon;
 }
 
 void ElaToggleButton::setIsToggled(bool isToggled)
@@ -144,9 +153,19 @@ void ElaToggleButton::paintEvent(QPaintEvent* event)
         painter.setPen(ElaThemeColor(d->_themeMode, BasicBaseLine));
         painter.drawLine(foregroundRect.x() + d->_pBorderRadius, height() - 1, foregroundRect.x() + foregroundRect.width() - d->_pBorderRadius, height() - 1);
     }
-
-    //文字绘制
     painter.setPen(isEnabled() ? d->_isToggled ? ElaThemeColor(d->_themeMode, BasicTextInvert) : ElaThemeColor(d->_themeMode, BasicText) : ElaThemeColor(d->_themeMode, BasicTextDisable));
-    painter.drawText(foregroundRect, Qt::AlignCenter, d->_pText);
+    if (d->_pIconVisible)
+    {
+        painter.setFont(QFont("ElaAwesome"));
+        QFontMetrics fm(painter.font());
+        QRect iconRect = foregroundRect.adjusted(0, 3, -foregroundRect.width() / 3 * 2 - 5, 0);
+        painter.drawText(iconRect, Qt::AlignVCenter | Qt::AlignRight, QChar((unsigned short)d->_pAwesome));
+        painter.setFont(QFont("Microsoft YaHei"));
+        QRect textRect = foregroundRect.adjusted(foregroundRect.width() / 3  + 5, 0, 0, 0);
+        painter.drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft, d->_pText);
+    } else
+    {
+        painter.drawText(foregroundRect, Qt::AlignCenter, d->_pText);
+    }
     painter.restore();
 }
