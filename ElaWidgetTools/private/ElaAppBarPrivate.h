@@ -21,8 +21,12 @@ class ElaAppBarPrivate : public QObject
     Q_PROPERTY_CREATE_D(bool, IsDefaultClosed)
     Q_PROPERTY_CREATE_D(bool, IsOnlyAllowMinAndClose)
     Q_PROPERTY_CREATE_D(int, AppBarHeight)
-    Q_PROPERTY_CREATE_D(QWidget*, CustomWidget)
-    Q_PROPERTY_CREATE_D(int, CustomWidgetMaximumWidth)
+    Q_PROPERTY_CREATE_D(QWidget*, LeftCustomWidget)
+    Q_PROPERTY_CREATE_D(QWidget*, MiddleCustomWidget)
+    Q_PROPERTY_CREATE_D(QWidget*, RightCustomWidget)
+    Q_PROPERTY_CREATE_D(int, LeftCustomWidgetMaximumWidth)
+    Q_PROPERTY_CREATE_D(int,MiddleCustomWidgetMaximumWidth)
+    Q_PROPERTY_CREATE_D(int, RightCustomWidgetMaximumWidth)
 public:
     explicit ElaAppBarPrivate(QObject* parent = nullptr);
     ~ElaAppBarPrivate() override;

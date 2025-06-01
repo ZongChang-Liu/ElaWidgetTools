@@ -42,8 +42,15 @@ ElaAppBar::ElaAppBar(QWidget* parent)
     d->_pIsFixedSize = false;
     d->_pIsDefaultClosed = true;
     d->_pIsOnlyAllowMinAndClose = false;
-    d->_pCustomWidget = nullptr;
-    d->_pCustomWidgetMaximumWidth = 550;
+    d->_pLeftCustomWidget = new QWidget();
+    d->_pLeftCustomWidget->setVisible(false);
+    d->_pMiddleCustomWidget = new QWidget();
+    d->_pMiddleCustomWidget->setVisible(false);
+    d->_pRightCustomWidget = new QWidget();
+    d->_pRightCustomWidget->setVisible(false);
+    d->_pLeftCustomWidgetMaximumWidth = 550;
+    d->_pMiddleCustomWidgetMaximumWidth = 550;
+    d->_pLeftCustomWidgetMaximumWidth = 550;
     window()->installEventFilter(this);
 #ifdef Q_OS_WIN
     ElaWinShadowHelper::getInstance()->initDWMAPI();
@@ -151,8 +158,11 @@ ElaAppBar::ElaAppBar(QWidget* parent)
     d->_mainLayout->addLayout(d->_createVLayout(d->_navigationButton));
     d->_mainLayout->addLayout(d->_iconLabelLayout);
     d->_mainLayout->addLayout(d->_titleLabelLayout);
+    d->_mainLayout->addWidget(d->_pLeftCustomWidget);
     d->_mainLayout->addStretch();
+    d->_mainLayout->addWidget(d->_pMiddleCustomWidget);
     d->_mainLayout->addStretch();
+    d->_mainLayout->addWidget(d->_pRightCustomWidget);
     d->_mainLayout->addLayout(d->_createVLayout(d->_stayTopButton));
     d->_mainLayout->addLayout(d->_createVLayout(d->_themeChangeButton));
     d->_mainLayout->addLayout(d->_createVLayout(d->_minButton));
@@ -208,55 +218,91 @@ void ElaAppBar::setCustomWidget(ElaAppBarType::CustomArea customArea, QWidget* w
     }
     widget->setMinimumHeight(0);
     widget->setMaximumHeight(height());
-    widget->setMaximumWidth(d->_pCustomWidgetMaximumWidth);
     widget->setParent(this);
-    if (d->_pCustomWidget)
-    {
-        d->_mainLayout->removeWidget(d->_pCustomWidget);
-    }
+
     switch (customArea)
     {
-    case ElaAppBarType::LeftArea:
-    {
-        d->_mainLayout->insertWidget(4, widget);
-        break;
+        case ElaAppBarType::LeftArea:
+        {
+
+                widget->setMaximumWidth(d->_pLeftCustomWidgetMaximumWidth);
+                if (d->_pLeftCustomWidget)
+                {
+                    d->_mainLayout->removeWidget(d->_pLeftCustomWidget);
+                }
+                d->_pLeftCustomWidget = widget;
+                d->_mainLayout->insertWidget(4, widget);
+                break;
+        }
+        case ElaAppBarType::MiddleArea:
+        {
+                widget->setMaximumWidth(d->_pMiddleCustomWidgetMaximumWidth);
+                if (d->_pMiddleCustomWidget)
+                {
+                    d->_mainLayout->removeWidget(d->_pMiddleCustomWidget);
+                }
+                d->_pMiddleCustomWidget = widget;
+                d->_mainLayout->insertWidget(6, widget);
+                break;
+        }
+        case ElaAppBarType::RightArea:
+        {
+                widget->setMaximumWidth(d->_pRightCustomWidgetMaximumWidth);
+                if (d->_pRightCustomWidget)
+                {
+                    d->_mainLayout->removeWidget(d->_pRightCustomWidget);
+                }
+                d->_pRightCustomWidget = widget;
+                d->_mainLayout->insertWidget(8, widget);
+                break;
+        }
     }
-    case ElaAppBarType::MiddleArea:
-    {
-        d->_mainLayout->insertWidget(5, widget);
-        break;
-    }
-    case ElaAppBarType::RightArea:
-    {
-        d->_mainLayout->insertWidget(6, widget);
-        break;
-    }
-    }
-    d->_pCustomWidget = widget;
     Q_EMIT customWidgetChanged();
 }
 
-QWidget* ElaAppBar::getCustomWidget() const
+QWidget* ElaAppBar::getCustomWidget(ElaAppBarType::CustomArea customArea) const
 {
     Q_D(const ElaAppBar);
-    return d->_pCustomWidget;
+    switch (customArea)
+    {
+        case  ElaAppBarType::LeftArea:
+            return d->_pLeftCustomWidget;
+        case ElaAppBarType::MiddleArea:
+            return d->_pMiddleCustomWidget;
+        case ElaAppBarType::RightArea:
+            return d->_pRightCustomWidget;
+    }
+    return nullptr;
 }
 
-void ElaAppBar::setCustomWidgetMaximumWidth(int width)
+void ElaAppBar::setCustomWidgetMaximumWidth(const ElaAppBarType::CustomArea customArea, const int CustomWidgetMaximumWidth)
 {
     Q_D(ElaAppBar);
-    d->_pCustomWidgetMaximumWidth = width;
-    if (d->_pCustomWidget)
+    switch (customArea)
     {
-        d->_pCustomWidget->setMaximumWidth(width);
+    case  ElaAppBarType::LeftArea:
+        return d->_pLeftCustomWidget->setMaximumWidth(CustomWidgetMaximumWidth);
+    case ElaAppBarType::MiddleArea:
+        return d->_pMiddleCustomWidget->setMaximumWidth(CustomWidgetMaximumWidth);
+    case ElaAppBarType::RightArea:
+        return d->_pRightCustomWidget->setMaximumWidth(CustomWidgetMaximumWidth);
     }
-    Q_EMIT pCustomWidgetMaximumWidthChanged();
+    Q_EMIT CustomWidgetMaximumWidthChanged(customArea);
 }
 
-int ElaAppBar::getCustomWidgetMaximumWidth() const
+int ElaAppBar::getCustomWidgetMaximumWidth(ElaAppBarType::CustomArea customArea) const
 {
     Q_D(const ElaAppBar);
-    return d->_pCustomWidgetMaximumWidth;
+    switch (customArea)
+    {
+    case  ElaAppBarType::LeftArea:
+        return d->_pLeftCustomWidgetMaximumWidth;
+    case ElaAppBarType::MiddleArea:
+        return d->_pMiddleCustomWidgetMaximumWidth;
+    case ElaAppBarType::RightArea:
+        return d->_pRightCustomWidgetMaximumWidth;
+    }
+    return -1;
 }
 
 void ElaAppBar::setIsFixedSize(bool isFixedSize)

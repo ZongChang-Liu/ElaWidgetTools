@@ -50,6 +50,7 @@ Q_SIGNALS:
     Q_SIGNAL void navigationNodeClicked(ElaNavigationType::NavigationNodeType nodeType, QString nodeKey);
     Q_SIGNAL void navigationNodeAdded(ElaNavigationType::NavigationNodeType nodeType, QString nodeKey, QWidget* page);
     Q_SIGNAL void navigationNodeRemoved(ElaNavigationType::NavigationNodeType nodeType, QString nodeKey);
+    Q_SIGNAL void displayModeChanged(ElaNavigationType::NavigationDisplayMode displayMode);
 
 protected:
     virtual void paintEvent(QPaintEvent* event) override;

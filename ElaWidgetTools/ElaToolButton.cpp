@@ -64,6 +64,19 @@ bool ElaToolButton::getIsTransparent() const
     return d->_toolButtonStyle->getIsTransparent();
 }
 
+void ElaToolButton::setSelectedColor(QColor SelectedColor)
+{
+    Q_D(ElaToolButton);
+    d->_toolButtonStyle->_isSetSelectedColor = true;
+    d->_toolButtonStyle->setSelectedColor(std::move(SelectedColor));
+}
+
+QColor ElaToolButton::getSelectedColor() const
+{
+    Q_D(const ElaToolButton);
+    return d->_toolButtonStyle->getSelectedColor();
+}
+
 void ElaToolButton::setMenu(ElaMenu* menu)
 {
     if (!menu || menu == this->menu())

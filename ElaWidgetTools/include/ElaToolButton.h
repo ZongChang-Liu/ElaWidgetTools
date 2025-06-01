@@ -4,6 +4,7 @@
 #include <QToolButton>
 
 #include "Def.h"
+class ElaToolTip;
 class ElaMenu;
 class ElaToolButtonPrivate;
 class ELA_EXPORT ElaToolButton : public QToolButton
@@ -12,6 +13,7 @@ class ELA_EXPORT ElaToolButton : public QToolButton
     Q_Q_CREATE(ElaToolButton)
     Q_PROPERTY_CREATE_Q_H(int, BorderRadius);
     Q_PROPERTY_CREATE_Q_H(bool, IsSelected);
+    Q_PROPERTY_CREATE_Q_H(QColor, SelectedColor);
 
 public:
     explicit ElaToolButton(QWidget* parent = nullptr);

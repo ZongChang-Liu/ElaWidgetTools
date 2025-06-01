@@ -12,6 +12,7 @@ class ElaToolButtonStyle : public QProxyStyle
     Q_PRIVATE_CREATE(int, BorderRadius)
     Q_PROPERTY_CREATE(qreal, ExpandIconRotate)
     Q_PRIVATE_CREATE(bool, IsSelected);
+    Q_PRIVATE_CREATE(QColor, SelectedColor);
 
 public:
     explicit ElaToolButtonStyle(QStyle* style = nullptr);
@@ -19,6 +20,7 @@ public:
     void drawComplexControl(ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget = nullptr) const override;
     QSize sizeFromContents(ContentsType type, const QStyleOption* option, const QSize& size, const QWidget* widget) const override;
 
+    bool _isSetSelectedColor{false};
 private:
     ElaThemeType::ThemeMode _themeMode;
     int _contentMargin{6};

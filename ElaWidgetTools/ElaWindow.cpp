@@ -160,23 +160,24 @@ int ElaWindow::getAppBarHeight() const
     return d->_appBar->getAppBarHeight();
 }
 
-QWidget* ElaWindow::getCustomWidget() const
+QWidget* ElaWindow::getCustomWidget(ElaAppBarType::CustomArea customArea) const
 {
     Q_D(const ElaWindow);
-    return d->_appBar->getCustomWidget();
+    return d->_appBar->getCustomWidget(customArea);
 }
 
-void ElaWindow::setCustomWidgetMaximumWidth(int width)
+void ElaWindow::setCustomWidgetMaximumWidth(ElaAppBarType::CustomArea customArea,int width)
 {
     Q_D(ElaWindow);
-    d->_appBar->setCustomWidgetMaximumWidth(width);
-    Q_EMIT pCustomWidgetMaximumWidthChanged();
+    d->_appBar->setCustomWidgetMaximumWidth(customArea,width);
+    Q_EMIT CustomWidgetMaximumWidthChanged(customArea);
 }
 
-int ElaWindow::getCustomWidgetMaximumWidth() const
+int ElaWindow::getCustomWidgetMaximumWidth(ElaAppBarType::CustomArea customArea) const
 {
+
     Q_D(const ElaWindow);
-    return d->_appBar->getCustomWidgetMaximumWidth();
+    return d->_appBar->getCustomWidgetMaximumWidth(customArea);
 }
 
 void ElaWindow::setIsCentralStackedWidgetTransparent(bool isTransparent)

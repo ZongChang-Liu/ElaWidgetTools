@@ -508,6 +508,7 @@ void ElaNavigationBar::setDisplayMode(ElaNavigationType::NavigationDisplayMode d
     {
         return;
     }
+    Q_EMIT displayModeChanged(displayMode);
     d->_doComponentAnimation(displayMode, isAnimation);
     d->_raiseNavigationBar();
 }

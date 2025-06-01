@@ -15,7 +15,6 @@ class ELA_EXPORT ElaWindow : public QMainWindow
     Q_PROPERTY_CREATE_Q_H(bool, IsFixedSize)
     Q_PROPERTY_CREATE_Q_H(bool, IsDefaultClosed)
     Q_PROPERTY_CREATE_Q_H(int, AppBarHeight)
-    Q_PROPERTY_CREATE_Q_H(int, CustomWidgetMaximumWidth)
     Q_PROPERTY_CREATE_Q_H(int, ThemeChangeTime)
     Q_PROPERTY_CREATE_Q_H(bool, IsCentralStackedWidgetTransparent)
     Q_PROPERTY_CREATE_Q_H(bool, IsAllowPageOpenInNewWindow)
@@ -28,13 +27,17 @@ public:
     void moveToCenter();
 
     void setCustomWidget(ElaAppBarType::CustomArea customArea, QWidget* customWidget);
-    QWidget* getCustomWidget() const;
+    QWidget* getCustomWidget(ElaAppBarType::CustomArea customArea) const;
     void setIsNavigationBarEnable(bool isEnable);
     bool getIsNavigationBarEnable() const;
     void setUserInfoCardVisible(bool isVisible);
     void setUserInfoCardPixmap(QPixmap pix);
     void setUserInfoCardTitle(QString title);
     void setUserInfoCardSubTitle(QString subTitle);
+
+    void setCustomWidgetMaximumWidth(ElaAppBarType::CustomArea customArea,int width);
+    int getCustomWidgetMaximumWidth(ElaAppBarType::CustomArea customArea) const;
+
     ElaNavigationType::NodeOperateReturnType addExpanderNode(QString expanderTitle, QString& expanderKey, ElaIconType::IconName awesome = ElaIconType::None) const;
     ElaNavigationType::NodeOperateReturnType addExpanderNode(QString expanderTitle, QString& expanderKey, QString targetExpanderKey, ElaIconType::IconName awesome = ElaIconType::None) const;
     ElaNavigationType::NodeOperateReturnType addPageNode(QString pageTitle, QWidget* page, ElaIconType::IconName awesome = ElaIconType::None) const;
@@ -65,6 +68,7 @@ Q_SIGNALS:
     Q_SIGNAL void navigationNodeClicked(ElaNavigationType::NavigationNodeType nodeType, QString nodeKey);
     Q_SIGNAL void customWidgetChanged();
     Q_SIGNAL void pageOpenInNewWindow(QString nodeKey);
+    Q_SIGNAL void CustomWidgetMaximumWidthChanged(ElaAppBarType::CustomArea customArea);
 
 protected:
     virtual bool eventFilter(QObject* watched, QEvent* event) override;
