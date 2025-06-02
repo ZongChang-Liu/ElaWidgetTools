@@ -21,6 +21,7 @@ public:
     void setUserInfoCardTitle(QString title);
     void setUserInfoCardSubTitle(QString subTitle);
     void setExpandWidth(int width);
+    void setToolTipOffset(int offsetX, int offsetY);
 
     ElaNavigationType::NodeOperateReturnType addExpanderNode(QString expanderTitle, QString& expanderKey, ElaIconType::IconName awesome = ElaIconType::None);
     ElaNavigationType::NodeOperateReturnType addExpanderNode(QString expanderTitle, QString& expanderKey, QString targetExpanderKey, ElaIconType::IconName awesome = ElaIconType::None);

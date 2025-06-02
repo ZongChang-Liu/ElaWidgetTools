@@ -84,6 +84,11 @@ void ElaNavigationView::navigationNodeStateChange(QVariantMap data)
     this->_navigationStyle->navigationNodeStateChange(data);
 }
 
+ElaToolTip* ElaNavigationView::getCompactToolTip() const
+{
+    return _compactToolTip;
+}
+
 void ElaNavigationView::onCustomContextMenuRequested(const QPoint& pos)
 {
     if (!_pNavigationBarPrivate->_pIsAllowPageOpenInNewWindow)

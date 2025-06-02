@@ -17,11 +17,11 @@ public:
     ~ElaNavigationView() override;
     void navigationNodeStateChange(QVariantMap data);
 
+    ElaToolTip* getCompactToolTip() const;
     Q_SLOT void onCustomContextMenuRequested(const QPoint& pos);
 Q_SIGNALS:
     Q_SIGNAL void navigationClicked(const QModelIndex& index);
     Q_SIGNAL void navigationOpenNewWindow(QString nodeKey);
-
 protected:
     virtual void mouseMoveEvent(QMouseEvent* event) override;
     virtual void mouseDoubleClickEvent(QMouseEvent* event) override;

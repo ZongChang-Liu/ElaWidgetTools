@@ -22,6 +22,8 @@
 #include <QResizeEvent>
 #include <QScroller>
 #include <QVBoxLayout>
+
+#include "ElaToolTip.h"
 Q_PROPERTY_CREATE_Q_CPP(ElaNavigationBar, bool, IsTransparent)
 Q_PROPERTY_CREATE_Q_CPP(ElaNavigationBar, bool, IsAllowPageOpenInNewWindow)
 ElaNavigationBar::ElaNavigationBar(QWidget* parent)
@@ -197,6 +199,13 @@ void ElaNavigationBar::setExpandWidth(const int width)
     Q_D(ElaNavigationBar);
     d->_pExpandWidth = width;
     setFixedWidth(d->_pExpandWidth);
+}
+
+void ElaNavigationBar::setToolTipOffset(int offsetX, int offsetY)
+{
+    Q_D(ElaNavigationBar);
+    d->_navigationView->getCompactToolTip()->setOffSetX(offsetX);
+    d->_navigationView->getCompactToolTip()->setOffSetY(offsetY);
 }
 
 ElaNavigationType::NodeOperateReturnType ElaNavigationBar::addExpanderNode(QString expanderTitle, QString& expanderKey, ElaIconType::IconName awesome)
