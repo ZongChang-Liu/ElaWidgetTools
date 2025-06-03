@@ -10,8 +10,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-#在这里配置QT路径 例如 D:/Qt/6.6.2/msvc2019_64
-SET(QT_SDK_DIR D:/Qt/6.6.2/msvc2019_64 CACHE PATH "QT SDK DIR" FORCE)
+if (UNIX)
+    message(STATUS "当前平台: Linux")
+    SET(QT_SDK_DIR "/home/liu/Qt5/Qt5.15.2/5.15.2/gcc_64" CACHE PATH "QT SDK DIR" FORCE)
+elseif (WIN32)
+    message(STATUS "当前平台: Windows")
+    SET(QT_SDK_DIR D:/Qt/6.6.2/msvc2019_64 CACHE PATH "QT SDK DIR" FORCE)
+endif()
 SET(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/Install CACHE PATH "Installation path" FORCE)
 
 option(BUILD_ELAPACKETIO "Build ElaPacketIO" OFF)

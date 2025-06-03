@@ -2,7 +2,7 @@
 #define ELATOOLTIPPRIVATE_H
 
 #include <QObject>
-
+#include <QPoint>
 #include "Def.h"
 class ElaToolTip;
 class QVBoxLayout;
