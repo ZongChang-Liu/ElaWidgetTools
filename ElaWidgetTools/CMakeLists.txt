@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 add_definitions(-DELAWIDGETTOOLS_LIBRARY)
-option(ELAWIDGETTOOLS_BUILD_STATIC_LIB "Build static library." OFF)
+option(ELAWIDGETTOOLS_BUILD_STATIC_LIB "Build static library." ON)
 
 FILE(GLOB ORIGIN *.h *.cpp)
 FILE(GLOB INCLUDE include/*.h)
