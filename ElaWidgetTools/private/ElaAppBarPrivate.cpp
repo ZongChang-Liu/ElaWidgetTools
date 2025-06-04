@@ -184,7 +184,7 @@ bool ElaAppBarPrivate::_containsCursorToItem(QWidget* item)
     QRectF rect = QRectF(item->mapTo(item->window(), QPoint(0, 0)), item->size());
     if (item == q)
     {
-        if (_containsCursorToItem(_routeBackButton) || _containsCursorToItem(_navigationButton)|| _containsCursorToItem(_pLeftCustomWidget)|| _containsCursorToItem(_pRightCustomWidget) || _containsCursorToItem(_pMiddleCustomWidget) || _containsCursorToItem(_stayTopButton) || _containsCursorToItem(_themeChangeButton) || _containsCursorToItem(_minButton) || _containsCursorToItem(_maxButton) || _containsCursorToItem(_closeButton))
+        if (_containsCursorToItem(_routeBackButton) || _containsCursorToItem(_navigationButton) || _containsCursorToItem(_pCustomWidget) || _containsCursorToItem(_stayTopButton) || _containsCursorToItem(_themeChangeButton) || _containsCursorToItem(_minButton) || _containsCursorToItem(_maxButton) || _containsCursorToItem(_closeButton))
         {
             return false;
         }
@@ -232,39 +232,9 @@ int ElaAppBarPrivate::_calculateMinimumWidth()
     {
         width += 5;
     }
-    if (_pLeftCustomWidget)
+    if (_pCustomWidget)
     {
-        int customWidgetWidth = _pLeftCustomWidget->width();
-        if (isHasNavigationBar)
-        {
-            if (customWidgetWidth > 300)
-            {
-                width += customWidgetWidth - 300;
-            }
-        }
-        else
-        {
-            width += customWidgetWidth;
-        }
-    }
-    if (_pRightCustomWidget)
-    {
-        int customWidgetWidth = _pRightCustomWidget->width();
-        if (isHasNavigationBar)
-        {
-            if (customWidgetWidth > 300)
-            {
-                width += customWidgetWidth - 300;
-            }
-        }
-        else
-        {
-            width += customWidgetWidth;
-        }
-    }
-    if (_pMiddleCustomWidget)
-    {
-        int customWidgetWidth = _pMiddleCustomWidget->width();
+        int customWidgetWidth = _pCustomWidget->width();
         if (isHasNavigationBar)
         {
             if (customWidgetWidth > 300)

@@ -57,17 +57,13 @@ class ELA_EXPORT ElaAppBar : public QWidget
     Q_PROPERTY_CREATE_Q_H(bool, IsDefaultClosed)
     Q_PROPERTY_CREATE_Q_H(bool, IsOnlyAllowMinAndClose)
     Q_PROPERTY_CREATE_Q_H(int, AppBarHeight)
+    Q_PROPERTY_CREATE_Q_H(int, CustomWidgetMaximumWidth)
 public:
     explicit ElaAppBar(QWidget* parent = nullptr);
     ~ElaAppBar();
 
     void setCustomWidget(ElaAppBarType::CustomArea customArea, QWidget* customWidget);
-    QWidget* getCustomWidget(ElaAppBarType::CustomArea customArea) const;
-
-
-    void setCustomWidgetMaximumWidth(ElaAppBarType::CustomArea customArea,int CustomWidgetMaximumWidth);
-    int getCustomWidgetMaximumWidth(ElaAppBarType::CustomArea customArea) const;
-    Q_SIGNAL void CustomWidgetMaximumWidthChanged(ElaAppBarType::CustomArea customArea);
+    QWidget* getCustomWidget() const;
 
     void setWindowButtonFlag(ElaAppBarType::ButtonType buttonFlag, bool isEnable = true);
     void setWindowButtonFlags(ElaAppBarType::ButtonFlags buttonFlags);
