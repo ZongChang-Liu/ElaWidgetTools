@@ -21,6 +21,7 @@ public:
 
 Q_SIGNALS:
     Q_SIGNAL void rangeAnimationFinished();
+    Q_SIGNAL void isHoverChanged(bool isHover);
 
 protected:
     virtual bool event(QEvent* event) override;

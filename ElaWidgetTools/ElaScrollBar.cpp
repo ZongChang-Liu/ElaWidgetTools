@@ -38,6 +38,7 @@ ElaScrollBar::ElaScrollBar(QWidget* parent)
     connect(d->_expandTimer, &QTimer::timeout, this, [=]() {
         d->_expandTimer->stop();
         d->_isExpand = underMouse();
+        Q_EMIT isHoverChanged(d->_isExpand);
         scrollBarStyle->startExpandAnimation(d->_isExpand);
     });
 }
