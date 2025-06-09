@@ -13,11 +13,13 @@ class ELA_EXPORT ElaMessageBar : public QWidget
     Q_Q_CREATE(ElaMessageBar)
 
 public:
-    static void success(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
-    static void warning(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
-    static void information(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
-    static void error(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
+    static ElaMessageBar* success(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
+    static ElaMessageBar* warning(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
+    static ElaMessageBar* information(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
+    static ElaMessageBar* error(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent = nullptr);
 
+    Q_SIGNALS:
+    Q_SIGNAL void clicked();
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
     virtual bool eventFilter(QObject* watched, QEvent* event) override;
