@@ -75,7 +75,7 @@ ElaMessageBar::~ElaMessageBar()
 {
 }
 
-void ElaMessageBar::success(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
+ElaMessageBar*  ElaMessageBar::success(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
 {
     // qDebug() << QApplication::topLevelWidgets();
     if (!parent)
@@ -90,15 +90,14 @@ void ElaMessageBar::success(ElaMessageBarType::PositionPolicy policy, QString ti
         }
         if (!parent)
         {
-            return;
+            return {};
         }
     }
 
-    ElaMessageBar* bar = new ElaMessageBar(policy, ElaMessageBarType::Success, title, text, displayMsec, parent);
-    Q_UNUSED(bar);
+    return new ElaMessageBar(policy, ElaMessageBarType::Success, title, text, displayMsec, parent);
 }
 
-void ElaMessageBar::warning(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
+ElaMessageBar*  ElaMessageBar::warning(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
 {
     if (!parent)
     {
@@ -112,14 +111,13 @@ void ElaMessageBar::warning(ElaMessageBarType::PositionPolicy policy, QString ti
         }
         if (!parent)
         {
-            return;
+            return{};
         }
     }
-    ElaMessageBar* bar = new ElaMessageBar(policy, ElaMessageBarType::Warning, title, text, displayMsec, parent);
-    Q_UNUSED(bar);
+   return new ElaMessageBar(policy, ElaMessageBarType::Warning, title, text, displayMsec, parent);
 }
 
-void ElaMessageBar::information(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
+ElaMessageBar*  ElaMessageBar::information(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
 {
     if (!parent)
     {
@@ -133,14 +131,13 @@ void ElaMessageBar::information(ElaMessageBarType::PositionPolicy policy, QStrin
         }
         if (!parent)
         {
-            return;
+            return {};
         }
     }
-    ElaMessageBar* bar = new ElaMessageBar(policy, ElaMessageBarType::Information, title, text, displayMsec, parent);
-    Q_UNUSED(bar);
+   return new ElaMessageBar(policy, ElaMessageBarType::Information, title, text, displayMsec, parent);
 }
 
-void ElaMessageBar::error(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
+ElaMessageBar*  ElaMessageBar::error(ElaMessageBarType::PositionPolicy policy, QString title, QString text, int displayMsec, QWidget* parent)
 {
     if (!parent)
     {
@@ -154,11 +151,10 @@ void ElaMessageBar::error(ElaMessageBarType::PositionPolicy policy, QString titl
         }
         if (!parent)
         {
-            return;
+            return {};
         }
     }
-    ElaMessageBar* bar = new ElaMessageBar(policy, ElaMessageBarType::Error, title, text, displayMsec, parent);
-    Q_UNUSED(bar);
+    return new ElaMessageBar(policy, ElaMessageBarType::Error, title, text, displayMsec, parent);
 }
 
 void ElaMessageBar::paintEvent(QPaintEvent* event)
@@ -229,6 +225,12 @@ bool ElaMessageBar::eventFilter(QObject* watched, QEvent* event)
     {
         switch (event->type())
         {
+        case QEvent::Enter:
+            setCursor(Qt::PointingHandCursor);
+            break;
+        case QEvent::Leave:
+            setCursor(Qt::ArrowCursor);
+            break;
         case QEvent::Resize:
         {
             QResizeEvent* resizeEvent = dynamic_cast<QResizeEvent*>(event);
@@ -273,6 +275,9 @@ bool ElaMessageBar::eventFilter(QObject* watched, QEvent* event)
             }
             break;
         }
+        case QEvent::MouseButtonRelease:
+            Q_EMIT clicked();
+            break;
         default:
         {
             break;
