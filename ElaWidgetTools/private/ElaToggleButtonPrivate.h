@@ -20,7 +20,6 @@ public:
     ~ElaToggleButtonPrivate() override;
 
 private:
-    bool _isAlphaAnimationFinished{true};
     bool _isToggled{false};
     bool _isPressed{false};
     ElaThemeType::ThemeMode _themeMode;

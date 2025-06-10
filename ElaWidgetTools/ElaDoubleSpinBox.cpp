@@ -15,7 +15,6 @@ ElaDoubleSpinBox::ElaDoubleSpinBox(QWidget* parent)
     Q_D(ElaDoubleSpinBox);
     d->q_ptr = this;
     d->_pExpandMarkWidth = 0;
-    setFixedSize(115, 35);
     d->_style = new ElaSpinBoxStyle(style());
     setStyle(d->_style);
     lineEdit()->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -102,7 +101,7 @@ void ElaDoubleSpinBox::focusOutEvent(QFocusEvent* event)
 void ElaDoubleSpinBox::paintEvent(QPaintEvent* event)
 {
     Q_D(ElaDoubleSpinBox);
-    ElaDoubleSpinBox::paintEvent(event);
+    QAbstractSpinBox::paintEvent(event);
     QPainter painter(this);
     painter.save();
     painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);

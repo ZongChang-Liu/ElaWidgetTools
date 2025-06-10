@@ -15,7 +15,6 @@ ElaSpinBox::ElaSpinBox(QWidget* parent)
     Q_D(ElaSpinBox);
     d->q_ptr = this;
     d->_pExpandMarkWidth = 0;
-    setFixedSize(115, 35);
     d->_style = new ElaSpinBoxStyle(style());
     setStyle(d->_style);
     lineEdit()->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);

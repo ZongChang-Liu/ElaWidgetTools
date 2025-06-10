@@ -54,7 +54,6 @@ void ElaToggleButton::setIsToggled(bool isToggled)
     Q_D(ElaToggleButton);
     d->_isToggled = isToggled;
     d->_pToggleAlpha = isToggled ? 255 : 0;
-    d->_isAlphaAnimationFinished = true;
     update();
     Q_EMIT toggled(isToggled);
 }
@@ -95,14 +94,10 @@ void ElaToggleButton::mouseReleaseEvent(QMouseEvent* event)
 {
     Q_D(ElaToggleButton);
     d->_isPressed = false;
-    d->_isAlphaAnimationFinished = false;
     d->_isToggled = !d->_isToggled;
     QPropertyAnimation* alphaAnimation = new QPropertyAnimation(d, "pToggleAlpha");
     connect(alphaAnimation, &QPropertyAnimation::valueChanged, this, [=](const QVariant& value) {
         update();
-    });
-    connect(alphaAnimation, &QPropertyAnimation::finished, this, [=]() {
-        d->_isAlphaAnimationFinished = true;
     });
     alphaAnimation->setDuration(250);
     alphaAnimation->setStartValue(d->_pToggleAlpha);
@@ -127,26 +122,28 @@ void ElaToggleButton::paintEvent(QPaintEvent* event)
 
     painter.save();
     QRect foregroundRect(1, 1, width() - 2, height() - 2);
-    if (d->_isAlphaAnimationFinished)
+
+    if (d->_isToggled)
     {
-        if (d->_isToggled)
+        if (d->_pToggleAlpha != 255)
         {
             painter.setPen(ElaThemeColor(d->_themeMode, BasicBorder));
-            painter.setBrush(isEnabled() ? d->_isPressed ? ElaThemeColor(d->_themeMode, PrimaryPress) : (underMouse() ? ElaThemeColor(d->_themeMode, PrimaryHover) : ElaThemeColor(d->_themeMode, PrimaryNormal)) : ElaThemeColor(d->_themeMode, BasicDisable));
-        }
-        else
+        } else
         {
-            painter.setPen(ElaThemeColor(d->_themeMode, BasicBorder));
-            painter.setBrush(isEnabled() ? d->_isPressed ? ElaThemeColor(d->_themeMode, BasicPress) : (underMouse() ? ElaThemeColor(d->_themeMode, BasicHover) : ElaThemeColor(d->_themeMode, BasicBase)) : ElaThemeColor(d->_themeMode, BasicDisable));
+            painter.setPen(Qt::NoPen);
         }
-    }
-    else
-    {
-        painter.setPen(Qt::NoPen);
-        QColor toggleColor = ElaThemeColor(d->_themeMode, PrimaryNormal);
+        QColor toggleColor = isEnabled() ? d->_isPressed ? ElaThemeColor(d->_themeMode, PrimaryPress) : (underMouse() ? ElaThemeColor(d->_themeMode, PrimaryHover) : ElaThemeColor(d->_themeMode, PrimaryNormal)) : ElaThemeColor(d->_themeMode, BasicDisable);
         toggleColor.setAlpha(d->_pToggleAlpha);
         painter.setBrush(toggleColor);
     }
+    else
+    {
+        painter.setPen(ElaThemeColor(d->_themeMode, BasicBorder));
+        QColor toggleColor = isEnabled() ? d->_isPressed ? ElaThemeColor(d->_themeMode, BasicPress) : (underMouse() ? ElaThemeColor(d->_themeMode, BasicHover) : ElaThemeColor(d->_themeMode, BasicBase)) : ElaThemeColor(d->_themeMode, BasicDisable);
+        toggleColor.setAlpha(d->_pToggleAlpha);
+        painter.setBrush(toggleColor);
+    }
+
     painter.drawRoundedRect(foregroundRect, d->_pBorderRadius, d->_pBorderRadius);
     // 底边线绘制
     if (!d->_isPressed && !d->_isToggled)

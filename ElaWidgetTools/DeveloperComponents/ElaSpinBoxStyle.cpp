@@ -8,7 +8,7 @@
 #include "ElaTheme.h"
 ElaSpinBoxStyle::ElaSpinBoxStyle(QStyle* style)
 {
-    _pButtonMode = ElaSpinBoxType::Inline;
+    _pButtonMode = ElaSpinBoxType::Side;
     _themeMode = eTheme->getThemeMode();
     connect(eTheme, &ElaTheme::themeModeChanged, this, [=](ElaThemeType::ThemeMode themeMode) {
         _themeMode = themeMode;
@@ -92,9 +92,9 @@ void ElaSpinBoxStyle::drawComplexControl(ComplexControl control, const QStyleOpt
         iconFont.setPixelSize(17);
         painter->setFont(iconFont);
         painter->setPen(ElaThemeColor(_themeMode, BasicText));
-        painter->drawText(addLineRect, Qt::AlignCenter, _pButtonMode == ElaSpinBoxType::PMSide ? QChar((unsigned short)ElaIconType::Plus) : QChar((unsigned short)ElaIconType::AngleUp));
+        painter->drawText(addLineRect, Qt::AlignCenter, _pButtonMode == ElaSpinBoxType::PMSide ? QChar((unsigned short)ElaIconType::Plus) : QChar((unsigned short)ElaIconType::AngleRight));
         //减小图标
-        painter->drawText(subLineRect, Qt::AlignCenter, _pButtonMode == ElaSpinBoxType::PMSide ? QChar((unsigned short)ElaIconType::Minus) : QChar((unsigned short)ElaIconType::AngleDown));
+        painter->drawText(subLineRect, Qt::AlignCenter, _pButtonMode == ElaSpinBoxType::PMSide ? QChar((unsigned short)ElaIconType::Minus) : QChar((unsigned short)ElaIconType::AngleLeft));
         painter->restore();
         return;
     }
