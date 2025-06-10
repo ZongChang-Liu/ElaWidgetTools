@@ -17,6 +17,7 @@ ElaSpinBox::ElaSpinBox(QWidget* parent)
     setStyle(new ElaSpinBoxStyle(style()));
     lineEdit()->setAlignment(Qt::AlignCenter);
     lineEdit()->setStyleSheet("background-color:transparent");
+    lineEdit()->setAttribute(Qt::WA_MacShowFocusRect,false);
     connect(eTheme, &ElaTheme::themeModeChanged, this, [=](ElaThemeType::ThemeMode themeMode) {
         if (isVisible())
         {
