@@ -32,6 +32,7 @@ ElaSlider::ElaSlider(Qt::Orientation orientation, QWidget* parent)
 
 ElaSlider::~ElaSlider()
 {
+    delete this->style();
 }
 
 void ElaSlider::mousePressEvent(QMouseEvent* event)

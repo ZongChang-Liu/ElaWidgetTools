@@ -80,6 +80,7 @@ ElaScrollBar::ElaScrollBar(QScrollBar* originScrollBar, QAbstractScrollArea* par
 
 ElaScrollBar::~ElaScrollBar()
 {
+    delete this->style();
 }
 
 bool ElaScrollBar::event(QEvent* event)

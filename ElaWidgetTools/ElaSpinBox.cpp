@@ -25,6 +25,8 @@ ElaSpinBox::ElaSpinBox(QWidget* parent)
 
 ElaSpinBox::~ElaSpinBox()
 {
+    Q_D(ElaSpinBox);
+    delete d->_style;
 }
 
 void ElaSpinBox::setButtonMode(ElaSpinBoxType::ButtonMode buttonMode)
@@ -53,6 +55,7 @@ void ElaSpinBox::setButtonMode(ElaSpinBoxType::ButtonMode buttonMode)
     }
     }
     setFrame(hasFrame());
+    d->onThemeChanged(eTheme->getThemeMode());
     Q_EMIT pButtonModeChanged();
 }
 

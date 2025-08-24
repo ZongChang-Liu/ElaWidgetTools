@@ -25,6 +25,8 @@ ElaDoubleSpinBox::ElaDoubleSpinBox(QWidget* parent)
 
 ElaDoubleSpinBox::~ElaDoubleSpinBox()
 {
+    Q_D(ElaDoubleSpinBox);
+    delete d->_style;
 }
 
 void ElaDoubleSpinBox::setButtonMode(ElaSpinBoxType::ButtonMode buttonMode)
@@ -52,6 +54,7 @@ void ElaDoubleSpinBox::setButtonMode(ElaSpinBoxType::ButtonMode buttonMode)
         break;
     }
     }
+    d->onThemeChanged(eTheme->getThemeMode());
     setFrame(hasFrame());
     Q_EMIT pButtonModeChanged();
 }
@@ -101,7 +104,7 @@ void ElaDoubleSpinBox::focusOutEvent(QFocusEvent* event)
 void ElaDoubleSpinBox::paintEvent(QPaintEvent* event)
 {
     Q_D(ElaDoubleSpinBox);
-    QAbstractSpinBox::paintEvent(event);
+    QDoubleSpinBox::paintEvent(event);
     QPainter painter(this);
     painter.save();
     painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);

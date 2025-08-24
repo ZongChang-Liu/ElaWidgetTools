@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "stdafx.h"
+#include "ElaProperty.h"
 class ElaThemeAnimationWidget : public QWidget
 {
     Q_OBJECT
@@ -11,7 +11,6 @@ class ElaThemeAnimationWidget : public QWidget
     Q_PROPERTY_CREATE(qreal, EndRadius)
     Q_PROPERTY_CREATE(QPoint, Center)
     Q_PROPERTY_CREATE(QImage, OldWindowBackground)
-    Q_PROPERTY_CREATE(QImage, NewWindowBackground)
 public:
     explicit ElaThemeAnimationWidget(QWidget* parent = nullptr);
     ~ElaThemeAnimationWidget();

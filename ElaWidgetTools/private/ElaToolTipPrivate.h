@@ -2,8 +2,9 @@
 #define ELATOOLTIPPRIVATE_H
 
 #include <QObject>
-#include <QPoint>
-#include "Def.h"
+#include <QPointF>
+
+#include "ElaDef.h"
 class ElaToolTip;
 class QVBoxLayout;
 class ElaText;
@@ -23,7 +24,7 @@ class ElaToolTipPrivate : public QObject
 
 public:
     explicit ElaToolTipPrivate(QObject* parent = nullptr);
-    ~ElaToolTipPrivate();
+    ~ElaToolTipPrivate() override;
 
 protected:
     virtual bool eventFilter(QObject* watched, QEvent* event);

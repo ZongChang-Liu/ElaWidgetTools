@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QPixmap>
 
-#include "Def.h"
+#include "ElaDef.h"
 class ElaPopularCard;
 class ElaPopularCardFloater;
 class ElaPopularCardPrivate : public QObject
@@ -17,7 +17,7 @@ class ElaPopularCardPrivate : public QObject
     Q_PROPERTY_CREATE_D(QString, SubTitle)
     Q_PROPERTY_CREATE_D(QString, InteractiveTips)
     Q_PROPERTY_CREATE_D(QString, DetailedText)
-    Q_PROPERTY_CREATE_D(QString, CardButtontext)
+    Q_PROPERTY_CREATE_D(QString, CardButtonText)
     Q_PROPERTY_CREATE_D(QWidget*, CardFloatArea)
     Q_PROPERTY_CREATE_D(QPixmap, CardFloatPixmap)
     Q_PROPERTY_CREATE(qreal, HoverYOffset);
