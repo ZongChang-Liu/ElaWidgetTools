@@ -7,10 +7,7 @@
 #define ELASLIDERPRIVATE_H
 
 #include <QObject>
-
-#include "stdafx.h"
-
-
+#include "ElaProperty.h"
 class ElaSlider;
 class ElaSliderStyle;
 class ElaSliderPrivate : public QObject

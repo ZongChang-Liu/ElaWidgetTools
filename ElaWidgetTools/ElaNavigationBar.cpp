@@ -216,13 +216,6 @@ void ElaNavigationBar::setUserInfoCardSubTitle(QString subTitle)
     d->_userCard->setSubTitle(subTitle);
 }
 
-void ElaNavigationBar::setExpandWidth(const int width)
-{
-    Q_D(ElaNavigationBar);
-    d->_pExpandWidth = width;
-    setFixedWidth(d->_pExpandWidth);
-}
-
 void ElaNavigationBar::setToolTipOffset(int offsetX, int offsetY)
 {
     Q_D(ElaNavigationBar);
