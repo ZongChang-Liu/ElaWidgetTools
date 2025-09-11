@@ -1,19 +1,25 @@
 #include "ElaCustomTabWidget.h"
 
-#include <QVBoxLayout>
-#include <QVariant>
-
 #include "ElaAppBar.h"
 #include "ElaTabBar.h"
 #include "ElaTabWidget.h"
 #include "ElaTabWidgetPrivate.h"
+#include <QDebug>
+#include <QMimeData>
+#include <QVBoxLayout>
+#include <QVariant>
 ElaCustomTabWidget::ElaCustomTabWidget(QWidget* parent)
     : ElaCustomWidget(parent)
 {
     resize(700, 500);
     setWindowTitle("");
+#ifndef Q_OS_WIN
+    setAttribute(Qt::WA_Hover);
+#endif
     setWindowIcon(QIcon());
     _customTabWidget = new ElaTabWidget(this);
+    _customTabWidget->setIsTabTransparent(true);
+    _customTabWidget->setObjectName("ElaCustomTabWidget");
     QTabBar* originTabBar = _customTabWidget->tabBar();
     originTabBar->hide();
     _customTabBar = new ElaTabBar(this);
@@ -31,6 +37,10 @@ ElaCustomTabWidget::ElaCustomTabWidget(QWidget* parent)
         }
     });
     connect(_customTabBar, &ElaTabBar::tabCloseRequested, originTabBar, &QTabBar::tabCloseRequested);
+
+    _customTabWidget->d_ptr->_customTabBar = _customTabBar;
+    connect(_customTabBar, &ElaTabBar::tabDragCreate, _customTabWidget->d_func(), &ElaTabWidgetPrivate::onTabDragCreate);
+    connect(_customTabBar, &ElaTabBar::tabDragDrop, _customTabWidget->d_func(), &ElaTabWidgetPrivate::onTabDragDrop);
 
     QWidget* customWidget = new QWidget(this);
     QVBoxLayout* customLayout = new QVBoxLayout(customWidget);
@@ -60,7 +70,7 @@ ElaCustomTabWidget::~ElaCustomTabWidget()
     }
 }
 
-void ElaCustomTabWidget::addTab(QWidget* widget, QIcon& tabIcon, const QString& tabTitle)
+void ElaCustomTabWidget::addTab(QWidget* widget, QIcon tabIcon, const QString& tabTitle)
 {
     _customTabBar->addTab(tabIcon, tabTitle);
     _customTabWidget->addTab(widget, tabIcon, tabTitle);
