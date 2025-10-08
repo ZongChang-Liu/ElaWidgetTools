@@ -21,7 +21,7 @@ public:
     explicit ElaToolTip(QWidget* parent = nullptr);
     ~ElaToolTip() override;
 
-    void updatePos(const QPoint& pos);
+    void updatePos(const QPoint& pos = QCursor::pos());
 
 protected:
     virtual void paintEvent(QPaintEvent* event);
