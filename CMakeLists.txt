@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 if (UNIX AND APPLE)
     message(STATUS "当前平台: MacOS")
-    SET(QT_SDK_DIR "C:/Qt6/Qt6.6.3/6.6.3/msvc2019_64" CACHE PATH "QT SDK DIR")
+    SET(QT_SDK_DIR "/Users/liuzongchang/Qt/6.10.0/macos" CACHE PATH "QT SDK DIR")
 elseif (UNIX)
     message(STATUS "当前平台: Linux")
     SET(QT_SDK_DIR "/home/liu/Qt5/Qt5.15.2/5.15.2/gcc_64" CACHE PATH "QT SDK DIR" FORCE)
@@ -27,6 +27,14 @@ list(APPEND CMAKE_PREFIX_PATH ${QT_SDK_DIR})
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+message(STATUS "Qt version: ${Qt${QT_VERSION_MAJOR}_VERSION}")
+
+if (NOT WIN32)
+    add_link_options(-Wl,--disable-new-dtags)
+    set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+    set(CMAKE_INSTALL_RPATH "${QT_SDK_DIR}/lib:${CMAKE_INSTALL_PREFIX}/ElaWidgetTools/lib")
+endif ()
 
 add_subdirectory(ElaWidgetTools)
 if (WIN32 AND BUILD_ELAPACKETIO)
