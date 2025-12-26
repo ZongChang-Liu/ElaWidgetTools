@@ -88,7 +88,7 @@ void ElaDrawerContainer::doDrawerAnimation(bool isExpand)
         }
     });
     opacityAnimation->setEasingCurve(QEasingCurve::OutCubic);
-    opacityAnimation->setDuration(300);
+    opacityAnimation->setDuration(230);
     opacityAnimation->setStartValue(_pOpacity);
     opacityAnimation->setEndValue(isExpand ? 1 : 0);
     opacityAnimation->start(QPropertyAnimation::DeleteWhenStopped);

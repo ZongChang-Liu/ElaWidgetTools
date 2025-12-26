@@ -554,7 +554,7 @@ void ElaNavigationBarPrivate::_doNavigationBarWidthAnimation(ElaNavigationType::
         connect(navigationBarWidthAnimation, &QPropertyAnimation::valueChanged, this, [=](const QVariant& value) {
             q->setFixedWidth(value.toUInt());
         });
-        navigationBarWidthAnimation->setEndValue(42);
+        navigationBarWidthAnimation->setEndValue(47);
         break;
     }
     case ElaNavigationType::Maximal:
