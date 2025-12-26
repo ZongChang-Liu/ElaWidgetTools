@@ -1,5 +1,4 @@
 ﻿#include "ElaNavigationBarPrivate.h"
-
 #include "ElaApplication.h"
 #include "ElaBaseListView.h"
 #include "ElaCustomTabWidget.h"
@@ -14,13 +13,14 @@
 #include "ElaNavigationNode.h"
 #include "ElaNavigationRouter.h"
 #include "ElaNavigationView.h"
-#include "ElaSuggestBox.h"
-#include "ElaSuggestBoxPrivate.h"
 #include "ElaToolButton.h"
+#include <QApplication>
 #include <QDebug>
 #include <QEvent>
 #include <QLayout>
 #include <QPropertyAnimation>
+#include <QScrollBar>
+#include <QTimer>
 ElaNavigationBarPrivate::ElaNavigationBarPrivate(QObject* parent)
     : QObject{parent}
 {
@@ -28,19 +28,6 @@ ElaNavigationBarPrivate::ElaNavigationBarPrivate(QObject* parent)
 
 ElaNavigationBarPrivate::~ElaNavigationBarPrivate()
 {
-}
-
-void ElaNavigationBarPrivate::onNavigationButtonClicked()
-{
-    Q_Q(ElaNavigationBar);
-    if (_currentDisplayMode == ElaNavigationType::Compact)
-    {
-        q->setDisplayMode(ElaNavigationType::Maximal);
-    }
-    else
-    {
-        q->setDisplayMode(ElaNavigationType::Compact);
-    }
 }
 
 void ElaNavigationBarPrivate::onNavigationOpenNewWindow(QString nodeKey)
@@ -405,8 +392,7 @@ void ElaNavigationBarPrivate::_addStackedPage(QWidget* page, QString pageKey)
     ElaNavigationNode* node = _navigationModel->getNavigationNode(pageKey);
     QVariantMap suggestData;
     suggestData.insert("ElaPageKey", pageKey);
-    QString suggestKey = _navigationSuggestBox->addSuggestion(node->getAwesome(), node->getNodeTitle(), suggestData);
-    _suggestKeyMap.insert(pageKey, suggestKey);
+    _suggestDataList.append(ElaSuggestBox::SuggestData(node->getAwesome(), node->getNodeTitle(), suggestData));
 }
 
 void ElaNavigationBarPrivate::_addFooterPage(QWidget* page, QString footKey)
@@ -421,14 +407,38 @@ void ElaNavigationBarPrivate::_addFooterPage(QWidget* page, QString footKey)
     ElaNavigationNode* node = _footerModel->getNavigationNode(footKey);
     QVariantMap suggestData;
     suggestData.insert("ElaPageKey", footKey);
-    QString suggestKey = _navigationSuggestBox->addSuggestion(node->getAwesome(), node->getNodeTitle(), suggestData);
-    _suggestKeyMap.insert(footKey, suggestKey);
+    _suggestDataList.append(ElaSuggestBox::SuggestData(node->getAwesome(), node->getNodeTitle(), suggestData));
 }
 
 void ElaNavigationBarPrivate::_raiseNavigationBar()
 {
     Q_Q(ElaNavigationBar);
     q->raise();
+}
+
+void ElaNavigationBarPrivate::_smoothScrollNavigationView(const QModelIndex& index)
+{
+    QTimer::singleShot(200, this, [=]() {
+        if (_currentDisplayMode == ElaNavigationType::Compact)
+        {
+            return;
+        }
+        QRect indexRect = _navigationView->visualRect(index);
+        QRect viewportRect = _navigationView->viewport()->rect();
+        if (viewportRect.contains(indexRect))
+        {
+            return;
+        }
+        auto vScrollBar = _navigationView->verticalScrollBar();
+        int startValue = vScrollBar->value();
+        int endValue = startValue + indexRect.top() - ((viewportRect.height() - indexRect.height()) / 2);
+        QPropertyAnimation* scrollAnimation = new QPropertyAnimation(vScrollBar, "value");
+        scrollAnimation->setEasingCurve(QEasingCurve::OutSine);
+        scrollAnimation->setDuration(255);
+        scrollAnimation->setStartValue(startValue);
+        scrollAnimation->setEndValue(endValue);
+        scrollAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    });
 }
 
 void ElaNavigationBarPrivate::_doComponentAnimation(ElaNavigationType::NavigationDisplayMode displayMode, bool isAnimation)
@@ -440,9 +450,7 @@ void ElaNavigationBarPrivate::_doComponentAnimation(ElaNavigationType::Navigatio
         _doNavigationBarWidthAnimation(displayMode, isAnimation);
         if (_currentDisplayMode == ElaNavigationType::Maximal)
         {
-            _searchButton->setVisible(true);
             _userCard->setVisible(false);
-            _navigationSuggestBox->setVisible(false);
             if (_isShowUserCard)
             {
                 _userButton->setVisible(true);
@@ -458,11 +466,8 @@ void ElaNavigationBarPrivate::_doComponentAnimation(ElaNavigationType::Navigatio
         _doNavigationViewWidthAnimation(isAnimation);
         if (_currentDisplayMode != ElaNavigationType::Minimal)
         {
-            _handleMaximalToCompactLayout();
-            _doNavigationButtonAnimation(true, isAnimation);
-            _doSearchButtonAnimation(true, isAnimation);
+            _handleUserButtonLayout(true);
             _doUserButtonAnimation(true, isAnimation);
-            _navigationSuggestBox->setVisible(false);
             _handleNavigationExpandState(true);
         }
         _currentDisplayMode = displayMode;
@@ -470,13 +475,9 @@ void ElaNavigationBarPrivate::_doComponentAnimation(ElaNavigationType::Navigatio
     }
     case ElaNavigationType::Maximal:
     {
-        _resetLayout();
-        _handleCompactToMaximalLayout();
+        _handleUserButtonLayout(false);
         _doNavigationBarWidthAnimation(displayMode, isAnimation);
         _doUserButtonAnimation(false, isAnimation);
-        _doNavigationButtonAnimation(false, isAnimation);
-        _doSearchButtonAnimation(false, isAnimation);
-        _navigationSuggestBox->setVisible(true);
         _currentDisplayMode = displayMode;
         _handleNavigationExpandState(false);
         break;
@@ -510,68 +511,20 @@ void ElaNavigationBarPrivate::_handleNavigationExpandState(bool isSave)
     }
 }
 
-void ElaNavigationBarPrivate::_handleMaximalToCompactLayout()
+void ElaNavigationBarPrivate::_handleUserButtonLayout(bool isCompact)
 {
-    // 动画过程布局
-    while (_navigationButtonLayout->count())
-    {
-        _navigationButtonLayout->takeAt(0);
-    }
-    if (_isShowUserCard)
-    {
-        _navigationButtonLayout->addSpacing(76);
-    }
-    else
-    {
-        _navigationButtonLayout->addSpacing(40);
-    }
-
-    _navigationSuggestLayout->addStretch();
-
-    while (_userButtonLayout->count())
-    {
-        _userButtonLayout->takeAt(0);
-    }
-    _userButtonLayout->addSpacing(36);
-}
-
-void ElaNavigationBarPrivate::_handleCompactToMaximalLayout()
-{
-    // 动画过程布局
-    while (_navigationButtonLayout->count())
-    {
-        _navigationButtonLayout->takeAt(0);
-    }
-    _navigationButtonLayout->addSpacing(38);
-    _navigationSuggestLayout->insertSpacing(0, 46);
-
     while (_userButtonLayout->count())
     {
         _userButtonLayout->takeAt(0);
     }
     if (_isShowUserCard)
     {
-        _userButtonLayout->addSpacing(74);
+        _userButtonLayout->addSpacing(isCompact ? 36 : 80);
     }
 }
 
 void ElaNavigationBarPrivate::_resetLayout()
 {
-    // 恢复初始布局
-    while (_navigationButtonLayout->count())
-    {
-        _navigationButtonLayout->takeAt(0);
-    }
-    _navigationButtonLayout->addWidget(_navigationButton);
-    _navigationButtonLayout->addWidget(_searchButton);
-
-    while (_navigationSuggestLayout->count())
-    {
-        _navigationSuggestLayout->takeAt(0);
-    }
-    _navigationSuggestLayout->addLayout(_navigationButtonLayout);
-    _navigationSuggestLayout->addWidget(_navigationSuggestBox);
-
     while (_userButtonLayout->count())
     {
         _userButtonLayout->takeAt(0);
@@ -585,7 +538,7 @@ void ElaNavigationBarPrivate::_doNavigationBarWidthAnimation(ElaNavigationType::
     QPropertyAnimation* navigationBarWidthAnimation = new QPropertyAnimation(q, "maximumWidth");
     navigationBarWidthAnimation->setEasingCurve(QEasingCurve::OutCubic);
     navigationBarWidthAnimation->setStartValue(q->width());
-    navigationBarWidthAnimation->setDuration(isAnimation ? 285 : 0);
+    navigationBarWidthAnimation->setDuration(isAnimation ? 255 : 0);
     switch (displayMode)
     {
     case ElaNavigationType::Minimal:
@@ -601,7 +554,7 @@ void ElaNavigationBarPrivate::_doNavigationBarWidthAnimation(ElaNavigationType::
         connect(navigationBarWidthAnimation, &QPropertyAnimation::valueChanged, this, [=](const QVariant& value) {
             q->setFixedWidth(value.toUInt());
         });
-        navigationBarWidthAnimation->setEndValue(47);
+        navigationBarWidthAnimation->setEndValue(42);
         break;
     }
     case ElaNavigationType::Maximal:
@@ -632,82 +585,36 @@ void ElaNavigationBarPrivate::_doNavigationViewWidthAnimation(bool isAnimation)
     navigationViewWidthAnimation->setEasingCurve(QEasingCurve::OutCubic);
     navigationViewWidthAnimation->setStartValue(_navigationView->columnWidth(0));
     navigationViewWidthAnimation->setEndValue(40);
-    navigationViewWidthAnimation->setDuration(isAnimation ? 285 : 0);
+    navigationViewWidthAnimation->setDuration(isAnimation ? 255 : 0);
     navigationViewWidthAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-}
-
-void ElaNavigationBarPrivate::_doNavigationButtonAnimation(bool isCompact, bool isAnimation)
-{
-    if (isCompact)
-    {
-        // 导航按钮
-        QPropertyAnimation* navigationButtonAnimation = new QPropertyAnimation(_navigationButton, "pos");
-        connect(navigationButtonAnimation, &QPropertyAnimation::finished, this, [=]() {
-            _resetLayout();
-        });
-        QPoint navigationButtonPos = _navigationButton->pos();
-        navigationButtonAnimation->setStartValue(navigationButtonPos);
-        if (_isShowUserCard)
-        {
-            navigationButtonAnimation->setEndValue(QPoint(0, 56));
-        }
-        else
-        {
-            navigationButtonAnimation->setEndValue(navigationButtonPos);
-        }
-        navigationButtonAnimation->setEasingCurve(QEasingCurve::OutCubic);
-        navigationButtonAnimation->setDuration(isAnimation ? 285 : 0);
-        navigationButtonAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-    }
-    else
-    {
-        QPropertyAnimation* navigationButtonAnimation = new QPropertyAnimation(_navigationButton, "pos");
-        QPoint navigationButtonPos = _navigationButton->pos();
-        navigationButtonAnimation->setStartValue(navigationButtonPos);
-        if (_isShowUserCard)
-        {
-            navigationButtonAnimation->setEndValue(QPoint(0, 94));
-        }
-        else
-        {
-            navigationButtonAnimation->setEndValue(navigationButtonPos);
-        }
-        navigationButtonAnimation->setEasingCurve(QEasingCurve::InOutSine);
-        navigationButtonAnimation->setDuration(isAnimation ? 130 : 0);
-        navigationButtonAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-    }
-}
-
-void ElaNavigationBarPrivate::_doSearchButtonAnimation(bool isCompact, bool isAnimation)
-{
-    if (isCompact)
-    {
-        QPoint navigationButtonPos = _navigationButton->pos();
-        // 搜索按钮
-        QPropertyAnimation* searchButtonAnimation = new QPropertyAnimation(_searchButton, "pos");
-        if (_isShowUserCard)
-        {
-            searchButtonAnimation->setStartValue(QPoint(200, navigationButtonPos.y()));
-            searchButtonAnimation->setEndValue(QPoint(0, navigationButtonPos.y()));
-        }
-        else
-        {
-            searchButtonAnimation->setStartValue(QPoint(200, navigationButtonPos.y() + 38));
-            searchButtonAnimation->setEndValue(QPoint(0, navigationButtonPos.y() + 38));
-        }
-        searchButtonAnimation->setEasingCurve(QEasingCurve::OutCubic);
-        searchButtonAnimation->setDuration(isAnimation ? 285 : 0);
-        searchButtonAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-        _searchButton->setVisible(true);
-    }
-    else
-    {
-        _searchButton->setVisible(false);
-    }
 }
 
 void ElaNavigationBarPrivate::_doUserButtonAnimation(bool isCompact, bool isAnimation)
 {
+    QPropertyAnimation* userButtonAnimation = new QPropertyAnimation(_userButton, "geometry");
+    connect(userButtonAnimation, &QPropertyAnimation::valueChanged, this, [=](const QVariant& value) {
+        _userButton->setFixedSize(value.toRect().size());
+    });
+    userButtonAnimation->setEasingCurve(isCompact ? QEasingCurve::OutCubic : QEasingCurve::InOutSine);
+    QRect maximumRect = QRect(13, 18, 64, 64);
+    QRect compactRect = QRect(3, 10, 36, 36);
+    userButtonAnimation->setStartValue(isCompact ? maximumRect : compactRect);
+    userButtonAnimation->setEndValue(isCompact ? compactRect : maximumRect);
+
+    QPropertyAnimation* spacingAnimation = new QPropertyAnimation(this, "pUserButtonSpacing");
+    connect(spacingAnimation, &QPropertyAnimation::valueChanged, this, [=](const QVariant& value) {
+        while (_userButtonLayout->count())
+        {
+            _userButtonLayout->takeAt(0);
+        }
+        if (_isShowUserCard)
+        {
+            _userButtonLayout->addSpacing(value.toInt());
+        }
+    });
+    spacingAnimation->setEasingCurve(isCompact ? QEasingCurve::OutCubic : QEasingCurve::InOutSine);
+    spacingAnimation->setStartValue(isCompact ? 80 : 36);
+    spacingAnimation->setEndValue(isCompact ? 36 : 80);
     if (isCompact)
     {
         _userCard->setVisible(false);
@@ -715,35 +622,24 @@ void ElaNavigationBarPrivate::_doUserButtonAnimation(bool isCompact, bool isAnim
         {
             _userButton->setVisible(true);
         }
-        QPropertyAnimation* userButtonAnimation = new QPropertyAnimation(_userButton, "geometry");
-        connect(userButtonAnimation, &QPropertyAnimation::valueChanged, this, [=](const QVariant& value) {
-            _userButton->setFixedSize(value.toRect().size());
-        });
-        userButtonAnimation->setEasingCurve(QEasingCurve::OutCubic);
-        userButtonAnimation->setStartValue(QRect(13, 18, 64, 64));
-        userButtonAnimation->setEndValue(QRect(3, 10, 36, 36));
-        userButtonAnimation->setDuration(isAnimation ? 285 : 0);
-        userButtonAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+        userButtonAnimation->setDuration(isAnimation ? 255 : 0);
+        spacingAnimation->setDuration(isAnimation ? 255 : 0);
     }
     else
     {
-        QPropertyAnimation* userButtonAnimation = new QPropertyAnimation(_userButton, "geometry");
-        connect(userButtonAnimation, &QPropertyAnimation::finished, this, [=]() {
+        connect(spacingAnimation, &QPropertyAnimation::finished, this, [=]() {
+            _userButton->setFixedSize(36, 36);
+            _userButton->setGeometry(QRect(3, 10, 36, 36));
+            _userButton->setVisible(false);
+            _resetLayout();
             if (_isShowUserCard)
             {
                 _userCard->setVisible(true);
             }
-            _userButton->setFixedSize(36, 36);
-            _userButton->setGeometry(QRect(3, 10, 36, 36));
-            _userButton->setVisible(false);
         });
-        connect(userButtonAnimation, &QPropertyAnimation::valueChanged, this, [=](const QVariant& value) {
-            _userButton->setFixedSize(value.toRect().size());
-        });
-        userButtonAnimation->setEasingCurve(QEasingCurve::InOutSine);
-        userButtonAnimation->setStartValue(QRect(3, 10, 36, 36));
-        userButtonAnimation->setEndValue(QRect(13, 18, 64, 64));
-        userButtonAnimation->setDuration(isAnimation ? 130 : 0);
-        userButtonAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+        userButtonAnimation->setDuration(isAnimation ? 135 : 0);
+        spacingAnimation->setDuration(isAnimation ? 135 : 0);
     }
+    userButtonAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    spacingAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }

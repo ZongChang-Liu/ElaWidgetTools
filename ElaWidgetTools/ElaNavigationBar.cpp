@@ -49,49 +49,20 @@ ElaNavigationBar::ElaNavigationBar(QWidget* parent)
     d->_userButton->setBorderRadius(8);
     d->_userButtonLayout = new QVBoxLayout();
     d->_userButtonLayout->setAlignment(Qt::AlignLeft);
-    d->_userButtonLayout->setContentsMargins(0, 0, 0, 6);
+    d->_userButtonLayout->setContentsMargins(0, 0, 0, 0);
     d->_userButtonLayout->setSpacing(0);
     d->_userButtonLayout->addWidget(d->_userButton);
 
     connect(d->_userButton, &ElaIconButton::clicked, this, &ElaNavigationBar::userInfoCardClicked);
-    QHBoxLayout* userCardLayout = new QHBoxLayout();
-    userCardLayout->setContentsMargins(0, 0, 0, 0);
-    userCardLayout->addSpacing(3);
-    userCardLayout->addLayout(d->_userButtonLayout);
-    userCardLayout->addWidget(d->_userCard);
-
-    // 搜索栏和按钮组
-    d->_navigationButton = new ElaToolButton(this);
-    d->_navigationButton->setFixedSize(40, 38);
-    d->_navigationButton->setElaIcon(ElaIconType::Bars);
-    d->_navigationButton->setBorderRadius(8);
-    connect(d->_navigationButton, &ElaToolButton::clicked, d, &ElaNavigationBarPrivate::onNavigationButtonClicked);
-
-    d->_searchButton = new ElaToolButton(this);
-    d->_searchButton->setFixedSize(40, 38);
-    d->_searchButton->setElaIcon(ElaIconType::MagnifyingGlass);
-    d->_searchButton->setBorderRadius(8);
-    connect(d->_searchButton, &ElaToolButton::clicked, d, &ElaNavigationBarPrivate::onNavigationButtonClicked);
-    d->_searchButton->setVisible(false);
-
-    d->_navigationSuggestBox = new ElaSuggestBox(this);
-    d->_navigationSuggestBox->setMinimumWidth(0);
-    d->_navigationButtonLayout = new QVBoxLayout();
-    d->_navigationButtonLayout->setContentsMargins(0, 0, 0, 0);
-    d->_navigationButtonLayout->setSpacing(0);
-    d->_navigationButtonLayout->addWidget(d->_navigationButton);
-    d->_navigationButtonLayout->addWidget(d->_searchButton);
-
-    d->_navigationSuggestLayout = new QHBoxLayout();
-    d->_navigationSuggestLayout->setContentsMargins(0, 0, 10, 0);
-    d->_navigationSuggestLayout->setSpacing(6);
-    d->_navigationSuggestLayout->addLayout(d->_navigationButtonLayout);
-    d->_navigationSuggestLayout->addWidget(d->_navigationSuggestBox);
+    d->_userCardLayout = new QVBoxLayout();
+    d->_userCardLayout->setContentsMargins(3, 10, 0, 5);
+    d->_userCardLayout->addLayout(d->_userButtonLayout);
+    d->_userCardLayout->addWidget(d->_userCard);
 
     // 搜索跳转
-    connect(d->_navigationSuggestBox, &ElaSuggestBox::suggestionClicked, this, [=](QString suggestText, QVariantMap suggestData) {
-        navigation(suggestData.value("ElaPageKey").toString());
-    });
+    //    connect(d->_navigationSuggestBox, &ElaSuggestBox::suggestionClicked, this, [=](QString suggestText, QVariantMap suggestData) {
+    //        navigation(suggestData.value("ElaPageKey").toString());
+    //    });
 
     // 导航模型
     d->_navigationModel = new ElaNavigationModel(this);
@@ -128,6 +99,7 @@ ElaNavigationBar::ElaNavigationBar(QWidget* parent)
     });
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setAlignment(Qt::AlignLeft);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 5, 5);
@@ -135,6 +107,7 @@ ElaNavigationBar::ElaNavigationBar(QWidget* parent)
     // mainLayout->addSpacing(4);
     mainLayout->addLayout(d->_navigationSuggestLayout);
     mainLayout->addSpacing(4);
+    mainLayout->addLayout(d->_userCardLayout);
     mainLayout->addWidget(d->_navigationView);
     mainLayout->addWidget(d->_footerView);
 
@@ -175,8 +148,13 @@ void ElaNavigationBar::setUserInfoCardVisible(bool isVisible)
     Q_D(ElaNavigationBar);
     d->_isShowUserCard = isVisible;
     d->_userCard->setVisible(isVisible);
-    if (!isVisible)
+    if (isVisible)
     {
+        d->_userCardLayout->setContentsMargins(3, 10, 5, 5);
+    }
+    else
+    {
+        d->_userCardLayout->setContentsMargins(0, 0, 0, 0);
         d->_userButton->setVisible(false);
     }
 }
@@ -372,7 +350,7 @@ ElaNavigationType::NodeOperateReturnType ElaNavigationBar::addFooterNode(QString
     return returnType;
 }
 
-bool ElaNavigationBar::getNavigationNodeIsExpanded(QString expanderKey) const
+bool ElaNavigationBar::getNodeIsExpanded(QString expanderKey) const
 {
     Q_D(const ElaNavigationBar);
     ElaNavigationNode* node = d->_navigationModel->getNavigationNode(expanderKey);
@@ -383,7 +361,7 @@ bool ElaNavigationBar::getNavigationNodeIsExpanded(QString expanderKey) const
     return d->_navigationView->isExpanded(node->getModelIndex());
 }
 
-void ElaNavigationBar::expandNavigationNode(QString expanderKey)
+void ElaNavigationBar::expandNode(QString expanderKey)
 {
     Q_D(ElaNavigationBar);
     ElaNavigationNode* node = d->_navigationModel->getNavigationNode(expanderKey);
@@ -395,7 +373,7 @@ void ElaNavigationBar::expandNavigationNode(QString expanderKey)
     d->_resetNodeSelected();
 }
 
-void ElaNavigationBar::collapseNavigationNode(QString expanderKey)
+void ElaNavigationBar::collapseNode(QString expanderKey)
 {
     Q_D(ElaNavigationBar);
     ElaNavigationNode* node = d->_navigationModel->getNavigationNode(expanderKey);
@@ -407,7 +385,7 @@ void ElaNavigationBar::collapseNavigationNode(QString expanderKey)
     d->_resetNodeSelected();
 }
 
-void ElaNavigationBar::removeNavigationNode(QString nodeKey)
+void ElaNavigationBar::removeNode(QString nodeKey)
 {
     Q_D(ElaNavigationBar);
     ElaNavigationNode* node = d->_navigationModel->getNavigationNode(nodeKey);
@@ -436,7 +414,15 @@ void ElaNavigationBar::removeNavigationNode(QString nodeKey)
             Q_EMIT navigationNodeRemoved(ElaNavigationType::PageNode, removeKey);
         }
     }
-    d->_navigationSuggestBox->removeSuggestion(d->_suggestKeyMap.value(nodeKey));
+    for (int i = 0; i < d->_suggestDataList.count(); i++)
+    {
+        auto& suggestData = d->_suggestDataList[i];
+        if (suggestData.getSuggestData().value("ElaPageKey").toString() == nodeKey)
+        {
+            d->_suggestDataList.removeAt(i);
+            break;
+        }
+    }
 }
 
 void ElaNavigationBar::setNodeKeyPoints(QString nodeKey, int keyPoints)
@@ -485,7 +471,7 @@ int ElaNavigationBar::getNodeKeyPoints(QString nodeKey) const
     return node->getKeyPoints();
 }
 
-void ElaNavigationBar::setNavigationNodeTitle(QString nodeKey, QString nodeTitle)
+void ElaNavigationBar::setNodeTitle(QString nodeKey, QString nodeTitle)
 {
     Q_D(ElaNavigationBar);
     ElaNavigationNode* node = d->_navigationModel->getNavigationNode(nodeKey);
@@ -501,7 +487,7 @@ void ElaNavigationBar::setNavigationNodeTitle(QString nodeKey, QString nodeTitle
     update();
 }
 
-QString ElaNavigationBar::getNavigationNodeTitle(QString nodeKey) const
+QString ElaNavigationBar::getNodeTitle(QString nodeKey) const
 {
     Q_D(const ElaNavigationBar);
     ElaNavigationNode* node = d->_navigationModel->getNavigationNode(nodeKey);
@@ -535,6 +521,7 @@ void ElaNavigationBar::navigation(QString pageKey, bool isLogClicked, bool isRou
             if (!node->getIsExpanderNode())
             {
                 d->onTreeViewClicked(node->getModelIndex(), isLogClicked, isRouteBack);
+                d->_smoothScrollNavigationView(node->getModelIndex());
             }
         }
     }
@@ -552,6 +539,12 @@ void ElaNavigationBar::setDisplayMode(ElaNavigationType::NavigationDisplayMode d
     d->_raiseNavigationBar();
 }
 
+ElaNavigationType::NavigationDisplayMode ElaNavigationBar::getDisplayMode() const
+{
+    Q_D(const ElaNavigationBar);
+    return d->_currentDisplayMode;
+}
+
 int ElaNavigationBar::getPageOpenInNewWindowCount(QString nodeKey) const
 {
     Q_D(const ElaNavigationBar);
@@ -560,6 +553,12 @@ int ElaNavigationBar::getPageOpenInNewWindowCount(QString nodeKey) const
         return 0;
     }
     return d->_pageNewWindowCountMap[nodeKey];
+}
+
+QList<ElaSuggestBox::SuggestData> ElaNavigationBar::getSuggestDataList() const
+{
+    Q_D(const ElaNavigationBar);
+    return d->_suggestDataList;
 }
 
 void ElaNavigationBar::paintEvent(QPaintEvent* event)

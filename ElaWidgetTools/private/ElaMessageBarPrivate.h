@@ -23,7 +23,7 @@ class ElaMessageBarManager : public QObject
     Q_SINGLETON_CREATE_H(ElaMessageBarManager)
 private:
     explicit ElaMessageBarManager(QObject* parent = nullptr);
-    ~ElaMessageBarManager();
+    ~ElaMessageBarManager() override;
 
 public:
     //请求事件堆栈调用
@@ -50,9 +50,10 @@ class ElaMessageBarPrivate : public QObject
     Q_OBJECT
     Q_D_CREATE(ElaMessageBar)
     Q_PROPERTY_CREATE(qreal, Opacity)
+    Q_PROPERTY_CREATE(qreal, TimePercent)
 public:
     explicit ElaMessageBarPrivate(QObject* parent = nullptr);
-    ~ElaMessageBarPrivate();
+    ~ElaMessageBarPrivate() override;
     void tryToRequestMessageBarEvent();
     WorkStatus getWorkMode() const;
     Q_INVOKABLE void onOtherMessageBarEnd(QVariantMap eventData);
@@ -80,6 +81,7 @@ private:
     int _messageBarVerticalTopMargin{50};
     int _messageBarSpacing{15};
     int _shadowBorderWidth{6};
+    qreal _timePercentHeight{2};
 
     // 逻辑数据
     bool _isMessageBarCreateAnimationFinished{false};

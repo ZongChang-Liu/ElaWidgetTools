@@ -20,6 +20,7 @@ ElaKeyBinderContainer::ElaKeyBinderContainer(QWidget* parent)
     _themeMode = eTheme->getThemeMode();
     connect(eTheme, &ElaTheme::themeModeChanged, this, [=](ElaThemeType::ThemeMode themeMode) {
         _themeMode = themeMode;
+        update();
     });
 }
 
@@ -65,13 +66,33 @@ bool ElaKeyBinderContainer::event(QEvent* event)
         QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>(event);
         if (!keyEvent->isAutoRepeat())
         {
-            if (keyEvent->key() == Qt::Key_Shift)
+            switch (keyEvent->key())
+            {
+            case Qt::Key_Shift:
             {
                 _pBinderKeyText = "Shift";
+                break;
             }
-            else
+            case Qt::Key_Control:
+            {
+                _pBinderKeyText = "Ctrl";
+                break;
+            }
+            case Qt::Key_Alt:
+            {
+                _pBinderKeyText = "Alt";
+                break;
+            }
+            case Qt::Key_Meta:
+            {
+                _pBinderKeyText = "Win";
+                break;
+            }
+            default:
             {
                 _pBinderKeyText = QKeySequence(keyEvent->key()).toString();
+                break;
+            }
             }
             _pNativeVirtualBinderKey = keyEvent->nativeVirtualKey();
             update();
