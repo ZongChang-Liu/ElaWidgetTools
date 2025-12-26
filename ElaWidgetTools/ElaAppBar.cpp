@@ -178,8 +178,11 @@ ElaAppBar::ElaAppBar(QWidget* parent)
     d->_customAreaWidgetList[1] = middleAreaWidget;
     d->_customAreaWidgetList[2] = rightAreaWidget;
     d->_mainLayout->addWidget(leftAreaWidget);
+    d->_mainLayout->addStretch();
     d->_mainLayout->addWidget(middleAreaWidget);
+    d->_mainLayout->addStretch();
     d->_mainLayout->addWidget(rightAreaWidget);
+    d->_mainLayout->addStretch();
 
     QHBoxLayout* rightLayout = new QHBoxLayout();
     rightLayout->setSpacing(0);
