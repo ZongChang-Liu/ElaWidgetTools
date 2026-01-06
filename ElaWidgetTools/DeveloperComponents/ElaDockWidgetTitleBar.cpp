@@ -60,6 +60,11 @@ ElaDockWidgetTitleBar::~ElaDockWidgetTitleBar()
 {
 }
 
+void ElaDockWidgetTitleBar::setIconVisible(const bool visible) const
+{
+    _iconLabel->setVisible(visible);
+}
+
 void ElaDockWidgetTitleBar::onFloatButtonClicked()
 {
     _dockWidget->setFloating(_dockWidget->isFloating() ? false : true);

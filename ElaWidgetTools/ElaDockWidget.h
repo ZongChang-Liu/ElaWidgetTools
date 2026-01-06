@@ -14,6 +14,8 @@ public:
     explicit ElaDockWidget(const QString& title, QWidget* parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
     ~ElaDockWidget() override;
 
+    void setIconVisible(bool isVisible);
+
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
 #ifdef Q_OS_WIN

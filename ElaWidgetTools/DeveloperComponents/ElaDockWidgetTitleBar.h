@@ -16,6 +16,8 @@ public:
     explicit ElaDockWidgetTitleBar(QWidget* parent = nullptr);
     ~ElaDockWidgetTitleBar();
 
+    void setIconVisible(bool visible) const;
+
     Q_SLOT void onFloatButtonClicked();
     Q_SLOT void onCloseButtonClicked();
 

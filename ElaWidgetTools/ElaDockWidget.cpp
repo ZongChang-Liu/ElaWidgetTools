@@ -49,6 +49,12 @@ ElaDockWidget::~ElaDockWidget()
 {
 }
 
+void ElaDockWidget::setIconVisible(const bool isVisible)
+{
+    Q_D(ElaDockWidget);
+    d->_titleBar->setIconVisible(isVisible);
+}
+
 void ElaDockWidget::paintEvent(QPaintEvent* event)
 {
     Q_D(ElaDockWidget);
