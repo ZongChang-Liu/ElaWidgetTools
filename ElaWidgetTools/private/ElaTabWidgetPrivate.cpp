@@ -229,6 +229,11 @@ void ElaTabWidgetPrivate::onTabDragDrop(QMimeData* mimeData)
         dragWidget->setProperty("CurrentCustomBar", QVariant::fromValue<ElaTabBar*>(_customTabBar));
         _customTabBar->insertTab(dropIndex, tabIcon, tabText);
         _customTabBar->setCurrentIndex(dropIndex);
+    } else {
+        if (dragWidget->property("IsTabClosable").isValid())
+        {
+            q->setTabClosable(q->indexOf(dragWidget), dragWidget->property("IsTabClosable").toBool());
+        }
     }
 }
 
