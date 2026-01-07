@@ -53,6 +53,24 @@ void ElaTabWidget::setTabPosition(TabPosition position)
     }
 }
 
+void ElaTabWidget::setTabClosable(const int index, const bool isClosable)
+{
+    Q_D(ElaTabWidget);
+    if (QWidget* tabWidget = widget(index); tabWidget != nullptr)
+    {
+        tabWidget->setProperty("IsTabClosable", isClosable);
+    }
+
+    if (isClosable)
+    {
+        d->_tabBar->tabButton(index, QTabBar::RightSide)->show();
+    }
+    else
+    {
+        d->_tabBar->tabButton(index, QTabBar::RightSide)->hide();
+    }
+}
+
 void ElaTabWidget::paintEvent(QPaintEvent* event)
 {
     Q_D(ElaTabWidget);

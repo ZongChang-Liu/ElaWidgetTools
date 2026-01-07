@@ -247,6 +247,10 @@ void ElaTabWidgetPrivate::onTabCloseRequested(int index)
         }
         originTabWidget->addTab(closeWidget, q->tabIcon(index), q->tabText(index));
         originTabWidget->setCurrentWidget(closeWidget);
+        if (closeWidget->property("IsTabClosable").isValid())
+        {
+            originTabWidget->setTabClosable(originTabWidget->indexOf(closeWidget), closeWidget->property("IsTabClosable").toBool());
+        }
     }
     else
     {

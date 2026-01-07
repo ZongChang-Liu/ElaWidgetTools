@@ -17,7 +17,7 @@ public:
     explicit ElaTabWidget(QWidget* parent = nullptr);
     ~ElaTabWidget() override;
     void setTabPosition(TabPosition position);
-
+    void setTabClosable(int index, bool isClosable);
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
     virtual void dragEnterEvent(QDragEnterEvent* event) override;
