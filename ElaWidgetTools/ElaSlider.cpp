@@ -28,6 +28,14 @@ ElaSlider::ElaSlider(Qt::Orientation orientation, QWidget* parent)
     : QSlider(orientation, parent)
 {
     setStyle(new ElaSliderStyle(style()));
+
+    _valueToolTip = new ElaToolTip(this);
+    _valueToolTip->setToolTip(QString::number(this->value()));
+    _valueToolTip->setOffSetX(-20);
+    _valueToolTip->setOffSetY(-60);
+    connect(this, &ElaSlider::valueChanged, this, [=](const int value) {
+        _valueToolTip->setToolTip(QString::number(value));
+    });
 }
 
 ElaSlider::~ElaSlider()
@@ -74,6 +82,6 @@ void ElaSlider::mouseMoveEvent(QMouseEvent* event)
 void ElaSlider::mouseReleaseEvent(QMouseEvent* event)
 {
     QSlider::mouseReleaseEvent(event);
-    _valueToolTip->hide();
+    // _valueToolTip->hide();
     _mousePressed = false;
 }

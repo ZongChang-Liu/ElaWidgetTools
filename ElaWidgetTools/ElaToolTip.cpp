@@ -2,6 +2,7 @@
 
 #include <QPainter>
 #include <QVBoxLayout>
+#include <QDebug>
 
 #include "ElaText.h"
 #include "ElaTheme.h"
