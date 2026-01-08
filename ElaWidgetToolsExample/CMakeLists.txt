@@ -50,18 +50,10 @@ if (WIN32)
         ExamplePage
         ModelView
     )
-    if (BUILD_ELAPACKETIO)
-        target_link_libraries(${PROJECT_NAME} PRIVATE
-            Qt${QT_VERSION_MAJOR}::Widgets
-            ElaWidgetTools
-            ElaPacketIO
-        )
-    else ()
-        target_link_libraries(${PROJECT_NAME} PRIVATE
-            Qt${QT_VERSION_MAJOR}::Widgets
-            ElaWidgetTools
-        )
-    endif ()
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
+        ElaWidgetTools
+    )
 
 else ()
     target_include_directories(${PROJECT_NAME} PUBLIC
