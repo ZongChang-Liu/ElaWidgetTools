@@ -187,7 +187,6 @@ void ElaNavigationBar::setToolTipOffset(int offsetX, int offsetY)
     d->_navigationView->getCompactToolTip()->setOffSetX(offsetX);
     d->_navigationView->getCompactToolTip()->setOffSetY(offsetY);
 }
-
 ElaNavigationType::NodeResult ElaNavigationBar::addExpanderNode(const QString& expanderTitle, QString& expanderKey, ElaIconType::IconName awesome)
 {
     Q_D(ElaNavigationBar);
