@@ -10,7 +10,7 @@
 #include <QPropertyAnimation>
 #include <QTimer>
 
-QMap<ElaMessageBarType::PositionPolicy, QList<ElaMessageBar*>*> _messageBarActiveMap;
+QMap<QObject*, QMap<ElaMessageBarType::PositionPolicy, QList<ElaMessageBar*>*>> ElaMessageBarPrivate::_messageBarActiveMap;
 ElaMessageBarPrivate::ElaMessageBarPrivate(QObject* parent)
     : QObject{parent}
 {
@@ -22,6 +22,7 @@ ElaMessageBarPrivate::ElaMessageBarPrivate(QObject* parent)
 
 ElaMessageBarPrivate::~ElaMessageBarPrivate()
 {
+    _updateActiveMap(false);
 }
 
 void ElaMessageBarPrivate::onOtherMessageBarEnd()
@@ -58,7 +59,9 @@ void ElaMessageBarPrivate::messageBarEnd()
     barFinishedOpacityAnimation->setEndValue(0);
     barFinishedOpacityAnimation->start(QAbstractAnimation::DeleteWhenStopped);
     // 通知同类型的其他MessageBar
-    for (const auto messageBar: *_messageBarActiveMap[_policy])
+    auto parentWidget = q->parent();
+    auto& messageBarMap = _messageBarActiveMap[parentWidget];
+    for (const auto messageBar: *messageBarMap[_policy])
     {
         if (messageBar->d_ptr->_isNormalDisplay)
         {
@@ -214,7 +217,9 @@ void ElaMessageBarPrivate::_calculateInitialPos(int& startX, int& startY, int& e
     }
     if (endY < _messageBarVerticalTopMargin || endY > q->parentWidget()->height() - _messageBarVerticalBottomMargin - q->minimumHeight())
     {
-        (*_messageBarActiveMap[_policy])[0]->d_ptr->messageBarEnd();
+        auto parentWidget = q->parent();
+        auto& messageBarMap = _messageBarActiveMap[parentWidget];
+        (*messageBarMap[_policy])[0]->d_ptr->messageBarEnd();
         _calculateInitialPos(startX, startY, endX, endY);
     }
 }
@@ -225,7 +230,9 @@ QList<int> ElaMessageBarPrivate::_getOtherMessageBarTotalData()
     QList<int> resultList;
     int minimumHeightTotal = 0;
     int indexLessCount = 0;
-    QList<ElaMessageBar*>* messageBarList = _messageBarActiveMap[_policy];
+    auto parentWidget = q->parent();
+    auto& messageBarMap = _messageBarActiveMap[parentWidget];
+    QList<ElaMessageBar*>* messageBarList = messageBarMap[_policy];
     for (const auto messageBar: *messageBarList)
     {
         if (messageBar == q)
@@ -289,26 +296,28 @@ void ElaMessageBarPrivate::_updateActiveMap(bool isActive)
 {
     Q_Q(ElaMessageBar);
     ElaMessageBarType::PositionPolicy policy = _policy;
+    auto parentWidget = q->parent();
+    auto& messageBarMap = _messageBarActiveMap[parentWidget];
     if (isActive)
     {
-        if (_messageBarActiveMap.contains(policy))
+        if (messageBarMap.contains(policy))
         {
-            _messageBarActiveMap[policy]->append(q);
+            messageBarMap[policy]->append(q);
         }
         else
         {
             QList<ElaMessageBar*>* messageBarList = new QList<ElaMessageBar*>();
             messageBarList->append(q);
-            _messageBarActiveMap.insert(policy, messageBarList);
+            messageBarMap.insert(policy, messageBarList);
         }
     }
     else
     {
-        if (_messageBarActiveMap.contains(policy))
+        if (messageBarMap.contains(policy))
         {
-            if (_messageBarActiveMap[policy]->count() > 0)
+            if (!messageBarMap[policy]->isEmpty())
             {
-                _messageBarActiveMap[policy]->removeOne(q);
+                messageBarMap[policy]->removeOne(q);
             }
         }
     }

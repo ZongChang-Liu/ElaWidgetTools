@@ -647,6 +647,34 @@ qreal ElaWindow::getWindowMovieRate() const
     return d->_windowPaintMovie->speed() / 100.0;
 }
 
+void ElaWindow::tabifyDockWidget(QDockWidget* targetDockWidget, QDockWidget* dockWidget)
+{
+    QMainWindow::tabifyDockWidget(targetDockWidget, dockWidget);
+}
+
+void ElaWindow::tabifyDockWidget(Qt::DockWidgetArea area, const QString& targetDockTitle, QDockWidget* dockWidget)
+{
+    if (!dockWidget)
+    {
+        return;
+    }
+    auto dockWidgetList = findChildren<QDockWidget*>();
+    for (const auto otherDock: dockWidgetList)
+    {
+        if (otherDock == dockWidget)
+        {
+            continue;
+        }
+        if (dockWidgetArea(otherDock) == area && otherDock->windowTitle() == targetDockTitle)
+        {
+            tabifyDockWidget(otherDock, dockWidget);
+            return;
+        }
+    }
+    // 未找到 按Area添加
+    addDockWidget(area, dockWidget);
+}
+
 void ElaWindow::setWindowPixmap(ElaThemeType::ThemeMode themeMode, const QPixmap& pixmap)
 {
     Q_D(ElaWindow);
@@ -665,13 +693,6 @@ QPixmap ElaWindow::getWindowPixmap(ElaThemeType::ThemeMode themeMode) const
 {
     Q_D(const ElaWindow);
     return themeMode == ElaThemeType::Light ? *d->_lightWindowPix : *d->_darkWindowPix;
-}
-
-void ElaWindow::closeWindow()
-{
-    Q_D(ElaWindow);
-    d->_isWindowClosing = true;
-    d->_appBar->closeWindow();
 }
 
 bool ElaWindow::eventFilter(QObject* watched, QEvent* event)
@@ -802,4 +823,14 @@ void ElaWindow::paintEvent(QPaintEvent* event)
     }
     }
     painter.restore();
+}
+
+QWidget* ElaWindow::centralWidget() const
+{
+    return QMainWindow::centralWidget();
+}
+
+void ElaWindow::setCentralWidget(QWidget* widget)
+{
+    QMainWindow::setCentralWidget(widget);
 }

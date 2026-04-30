@@ -3,6 +3,7 @@
 #include <QObject>
 
 #include "ElaDef.h"
+class ElaToolBarStyle;
 class ElaToolBar;
 class ElaToolBarPrivate : public QObject
 {
@@ -10,9 +11,10 @@ class ElaToolBarPrivate : public QObject
     Q_D_CREATE(ElaToolBar)
 public:
     explicit ElaToolBarPrivate(QObject* parent = nullptr);
-    ~ElaToolBarPrivate();
+    ~ElaToolBarPrivate() override;
 
 private:
+    ElaToolBarStyle* _toolBarStyle{nullptr};
     ElaThemeType::ThemeMode _themeMode;
     int _shadowBorderWidth{6};
 };

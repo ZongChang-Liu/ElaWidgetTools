@@ -122,7 +122,7 @@ void ElaScrollPage::navigation(int widgetIndex, bool isLogRoute)
     int currentIndex = d->_navigationTargetIndex;
     d->_switchCentralStackIndex(widgetIndex, d->_navigationTargetIndex);
     d->_navigationTargetIndex = widgetIndex;
-    QString pagetTitle = d->_centralWidgetMap.key(widgetIndex);
+    QString pageTitle = d->_centralWidgetMap.key(widgetIndex);
     if (isLogRoute)
     {
         auto command = new ElaScrollPageRouteCommand(this);
@@ -132,7 +132,7 @@ void ElaScrollPage::navigation(int widgetIndex, bool isLogRoute)
         command->setRedoPageIndex(widgetIndex);
         ElaActionCommander::getInstance()->recordCommand("ElaWidgetToolsAction", command, false);
     }
-    d->_breadcrumbBar->appendBreadcrumb(pagetTitle);
+    d->_breadcrumbBar->appendBreadcrumb(pageTitle);
 }
 
 void ElaScrollPage::setPageTitleSpacing(int spacing)

@@ -47,7 +47,7 @@ void ElaActionCommander::recordCommand(const QString& domainName, ElaActionComma
         // 超过最大命令数 则移除第一条命令
         if (commandList.count() >= d->_pMaxRouteCount)
         {
-            commandList.first()->deleteLater();
+            delete commandList[0];
             commandList.removeFirst();
             commandData.currentIndex -= 1;
         }
@@ -55,11 +55,14 @@ void ElaActionCommander::recordCommand(const QString& domainName, ElaActionComma
     // 当前索引不位于末尾 则清除索引后的数据
     if (commandData.currentIndex != commandList.count() - 1)
     {
-        for (int i = commandData.currentIndex + 1; i < commandList.count() - commandData.currentIndex - 1; i++)
+        int deleteStartIndex = commandData.currentIndex + 1;
+        int deleteCount = commandList.count() - commandData.currentIndex - 1;
+        int deleteEndIndex = deleteStartIndex + deleteCount;
+        for (int i = deleteStartIndex; i < deleteEndIndex; i++)
         {
-            commandList.at(i)->deleteLater();
+            delete commandList[i];
         }
-        commandList.remove(commandData.currentIndex + 1, commandList.count() - commandData.currentIndex - 1);
+        commandList.remove(deleteStartIndex, deleteCount);
         if (commandData.currentIndex > 0)
         {
             commandData.redoState = ElaActionCommanderType::RedoInvalid;
@@ -87,7 +90,7 @@ void ElaActionCommander::clearCommand(const QString& domainName)
     commandData.currentIndex = -1;
     for (const auto command: commandList)
     {
-        command->deleteLater();
+        delete command;
     }
     commandList.clear();
     commandData.undoState = ElaActionCommanderType::UndoInvalid;
